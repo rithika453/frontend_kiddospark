@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odd One Out - Kids Game</title>
+    <link rel="stylesheet" href="oddone.css">
+</head>
+<body>
+
+<div class="game-box">
+    <button class="hub-btn" onclick="window.location.href='../game.html'">🏠 Hub</button>
+
+    <div class="stats">
+        <span>Level: <span id="currentLevel">1</span>/10</span>
+        <span>Points: <span id="score">0</span></span>
+    </div>
+    
+    <p class="question-text">Pick the Odd One!</p>
+    
+    <div id="options" class="options-grid"></div>
+    
+    <button id="nextBtn" onclick="nextQuestion()">NEXT LEVEL ➔</button>
+</div>
+
+<script src="oddone.js"></script>
+</body>
+</html>

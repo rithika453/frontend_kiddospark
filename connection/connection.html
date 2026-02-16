@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Connection Game</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="game-page">
+
+    <div class="page-bg">
+        <img src="../images/background2.png" alt="Background">
+    </div>
+
+    <div id="level-page" class="container">
+        <h1 class="title" style="color: #333; text-shadow: none;">🌟 Pick a Level 🌟</h1>
+        <div class="level-grid" id="level-menu"></div>
+        <button class="next-btn" style="margin-top: 20px; background: #ff6f61;" onclick="window.location.href='../game.html'">⬅ Back to Games</button>
+    </div>
+
+    <div id="game-page" class="container hidden">
+        <div class="header">
+            <button class="menu-btn" onclick="showLevels()">🏠 Menu</button>
+            <div id="level-title" style="font-size: 24px; font-weight: bold; color: #ff9f43;">Level 1</div>
+        </div>
+
+        <div class="image-box" id="question-box"></div>
+
+        <p class="instruction" style="font-weight: bold; color: #555;">What do these make?</p>
+        <div id="options-container" class="options-grid"></div>
+    </div>
+
+    <div id="message-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title" style="color: #1dd1a1;">🌟 Great ! 🌟</h2>
+            <p id="modal-text" style="font-size: 18px;">Correct Answer!</p>
+            <button id="modal-btn" class="next-btn">Next Level</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

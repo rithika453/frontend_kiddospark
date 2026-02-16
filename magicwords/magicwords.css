@@ -1,0 +1,98 @@
+body { 
+    font-family: 'Comic Sans MS', cursive; 
+    /* Common Background for empty spaces */
+    background: url('../images/background2.png') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.game-box { 
+    width: 90%;
+    max-width: 400px; 
+    background: rgba(255, 255, 255, 0.98); 
+    padding: 20px; 
+    border-radius: 40px; 
+    border: 8px solid #ff9f43; /* Orange border matching your hub */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+    text-align: center;
+    position: relative;
+}
+
+.hub-btn {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    background: #ff7675;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #d63031;
+}
+
+h1 { color: #2d3436; font-size: 24px; }
+
+.word-card {
+    background: #f1f2f6;
+    padding: 10px;
+    border-radius: 20px;
+    border: 3px dashed #6c5ce7;
+    margin-bottom: 10px;
+}
+
+#wordDisplay { font-size: 32px; color: #6c5ce7; margin: 0; }
+
+#status { font-size: 14px; color: #636e72; }
+
+#colorCanvas {
+    background: white;
+    border: 3px solid #2d3436;
+    border-radius: 15px;
+    cursor: crosshair;
+}
+
+.speak-btn {
+    background: #1dd1a1;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #10ac84;
+}
+
+.color-palette {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.color-palette button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.next-btn {
+    background: #ff9f43;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #e67e22;
+}

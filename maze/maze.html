@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magical Maze Quest</title>
+    <link rel="stylesheet" href="maze.css">
+</head>
+<body>
+
+<div class="game-box">
+    <button class="back-btn" onclick="goToMainHub()">🏠 Hub</button>
+    
+    <h1 class="title">✨ MAZE QUEST ✨</h1>
+    
+    <div class="stats">
+        <span>Level: <span id="levelText">1</span></span>
+        <span>Moves: <span id="moveText">0</span></span>
+    </div>
+
+    <div id="maze-container" class="maze"></div>
+
+    <div class="controls">
+        <button class="arrow up" onclick="move('up')">🔼</button>
+        <button class="arrow left" onclick="move('left')">◀️</button>
+        <button class="arrow right" onclick="move('right')">▶️</button>
+        <button class="arrow down" onclick="move('down')">🔽</button>
+    </div>
+</div>
+
+<script src="maze.js"></script>
+</body>
+</html>

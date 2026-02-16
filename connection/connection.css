@@ -1,0 +1,137 @@
+/* Center alignment for the whole game */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Comic Sans MS', cursive;
+}
+
+/* Main Box */
+.container {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    padding: 25px;
+    border-radius: 40px;
+    border: 8px solid #ff9f43;
+    text-align: center;
+    box-shadow: 0 10px 0px #e67e22;
+    position: relative;
+    z-index: 100;
+}
+
+/* Hides elements when not needed */
+.hidden { 
+    display: none !important; 
+}
+
+.level-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.level-card {
+    padding: 12px 5px;
+    background: #54a0ff;
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #2e86de;
+    font-weight: bold;
+}
+
+.locked {
+    background: #ccc !important;
+    box-shadow: 0 4px 0 #999 !important;
+    cursor: not-allowed;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.menu-btn {
+    padding: 8px 15px;
+    background: #ff6f61;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.image-box {
+    font-size: 60px;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.plus-sign { font-size: 40px; color: #ff9f43; }
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.option-btn {
+    padding: 15px;
+    background: #1dd1a1;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #10ac84;
+    transition: 0.2s;
+}
+
+.option-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #10ac84; }
+
+/* Modal Design */
+.modal {
+    position: fixed;
+    top: 0; left: 0; 
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 30px;
+    border: 6px solid #1dd1a1;
+    text-align: center;
+    width: 300px;
+}
+
+.next-btn {
+    background: #1dd1a1;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #10ac84;
+}

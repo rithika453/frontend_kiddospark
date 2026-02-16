@@ -1,0 +1,194 @@
+:root {
+    --light: #f0d9b5;
+    --dark: #b58863;
+    --hl: #f6f669;
+    --sel: #82c0ff;
+    --last-move: #90ee90; /* Light Green for last move highlight */
+    --white-piece: #ffffff;
+    --black-piece: #000000;
+    --coord-color: #e6edf3; /* Color for coordinates */
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #1b1f24;
+    color: #e6edf3;
+    min-height: 100vh;
+    /* Centering the main content of the page */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Setup and Rules Screens --- */
+#setupScreen, #rulesScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+}
+
+#setupScreen button, #rulesScreen button {
+    margin: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+/* Style for selected buttons in the setup screen */
+.setup-selected {
+    background: #007bff !important;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
+    transform: scale(1.05);
+    transition: all 0.1s ease-in-out;
+}
+
+/* --- Game Screen and Board Layout --- */
+#gameScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+#boardContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px; 
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 480px;
+    height: 480px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* --- Coordinates --- */
+#ranks {
+    width: 20px;
+    height: 480px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-end; 
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--coord-color);
+}
+
+#files {
+    width: 480px; 
+    height: 20px;
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-around;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--coord-color);
+    margin-top: 5px; 
+}
+
+#ranks > span, #files > span {
+    /* Ensures coordinate labels are correctly spaced */
+    display: block; 
+    height: 12.5%; 
+    line-height: calc(480px / 8); /* Adjust for vertical centering */
+    box-sizing: border-box;
+}
+
+#files > span {
+    height: 100%;
+    width: 12.5%;
+    text-align: center;
+    line-height: 20px;
+}
+
+/* --- Tiles and Pieces --- */
+.tile {
+    display: grid;
+    place-items: center;
+    /* Use a standard chess font for best Unicode piece rendering */
+    font-family: "Segoe UI Symbol", "Noto Sans Symbols", sans-serif;
+    font-size: 40px; /* Increased font size for better visibility */
+    cursor: pointer;
+    position: relative;
+}
+
+.tile.light { background: var(--light); }
+.tile.dark  { background: var(--dark); }
+
+/* Last move highlight (mixes highlight color with tile color) */
+.tile.last-move.light { background: color-mix(in srgb, var(--light), var(--last-move) 50%); }
+.tile.last-move.dark  { background: color-mix(in srgb, var(--dark), var(--last-move) 50%); }
+
+
+.tile.selected { outline: 4px solid var(--sel); outline-offset: -4px; }
+
+/* Highlight for valid moves */
+.tile.highlight::after {
+    content: "";
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    border-radius: 50%;
+    background: rgba(246, 246, 105, 0.7);
+}
+
+/* Highlight for valid captures */
+.tile.capture::after {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 4px solid rgba(246, 246, 105, 0.9);
+    border-radius: 4px;
+}
+
+/* Piece Colors */
+.piece.white { color: var(--white-piece); text-shadow: 0 0 2px #222; }
+.piece.black { color: var(--black-piece); text-shadow: 0 0 2px #ddd; }
+
+/* --- Status and Controls --- */
+.status {
+    margin-top: 12px;
+    padding: 12px;
+    background: #141a21;
+    border-radius: 6px;
+    width: 480px;
+    text-align: center;
+}
+.controls {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+}
+button {
+    background: #238636;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+button:hover {
+    background: #2ea043;
+}
+button.secondary {
+    background: #30363d;
+    color: #c9d1d9;
+}
+button.secondary:hover {
+    background: #40464d;
+}

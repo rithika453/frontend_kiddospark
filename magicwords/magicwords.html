@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Words - Speak & Color</title>
+    <link rel="stylesheet" href="magic.css">
+</head>
+<body>
+
+<div class="game-box">
+    <button class="hub-btn" onclick="window.location.href='../game.html'">🏠 Hub</button>
+
+    <h1>🎤 Speak & Color</h1>
+
+    <div class="word-card">
+        <h2 id="wordDisplay">APPLE</h2>
+    </div>
+
+    <p id="status">Click Speak and say the word</p>
+
+    <button class="speak-btn" onclick="startListening()">🎙️ Speak</button>
+
+    <br><br>
+
+    <canvas id="colorCanvas" width="280" height="200"></canvas>
+
+    <br><br>
+
+    <div class="color-palette">
+        <button onclick="setColor('red')" style="background:red;"></button>
+        <button onclick="setColor('blue')" style="background:blue;"></button>
+        <button onclick="setColor('green')" style="background:green;"></button>
+        <button onclick="setColor('yellow')" style="background:yellow;"></button>
+        <button onclick="setColor('black')" style="background:black;"></button>
+    </div>
+
+    <br>
+
+    <button class="next-btn" onclick="nextLevel()">Next Level ➔</button>
+</div>
+
+<script src="magic.js"></script>
+</body>
+</html>

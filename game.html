@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiddospark+ | Game Zone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Small addition to ensure the game cards look interactive */
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-block;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="game-page">
+
+    <div class="page-bg">
+        <img src="images/background2.png" alt="Background">
+    </div>
+
+    <div class="overlay">
+
+        <div class="top-bar">
+            <button class="nav-btn" onclick="goTrack()">Track</button>
+            <button class="nav-btn" onclick="goBack()">Logout</button>
+            <button class="nav-btn" onclick="goChallenge()">Challenge</button>
+        </div>
+
+        <h1 class="title" style="margin-top: 20px; text-align: center; font-family: 'Comic Sans MS', cursive;">Fun Kids Game Zone</h1>
+
+        <div class="game-grid">
+
+            <a href="chessgame/chess.html" class="card">
+                <img src="images/chess game.png" alt="Chess Game">
+            </a>
+
+            <a href="magicwords/magicwords.html" class="card">
+                <img src="images/magic words.png" alt="Magic Words">
+            </a>
+
+            <a href="maze/maze.html" class="card">
+                <img src="images/maze game.png" alt="Maze Game">
+            </a>
+
+            <a href="oddone/oddone.html" class="card">
+                <img src="images/odd one out.png" alt="Odd One Out">
+            </a>
+
+            <a href="connection/connection.html" class="card">
+                <img src="images/connection game.jpg" alt="Connection Game">
+            </a>
+
+        </div>
+
+    </div>
+
+    <script>
+        function goTrack() {
+            window.location.href = "track.html";
+        }
+
+        function goBack() {
+            // Usually logout clears session, but for now it redirects
+            window.location.href = "login.html";
+        }
+
+        function goChallenge() {
+            alert("Challenge mode coming soon! 🚀 Keep practicing!");
+        }
+    </script>
+
+</body>
+</html>
