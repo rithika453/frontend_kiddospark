@@ -1,24 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chess Game</title>
-
-<!-- ✅ chess styles only -->
-<link rel="stylesheet" href="chess.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Chess</title>
+    <link rel="stylesheet" href="chess.css">
 </head>
 <body>
 
-<button onclick="window.location.href='../gamezone.html'">
-⬅ Back to Games
-</button>
+    <div id="setupScreen">
+        <h1>Choose Game Mode</h1>
+        <div class="setup-group">
+            <button id="mode-bot" onclick="setMode('bot')">Play with Bot 🤖</button>
+            <button id="mode-p2p" onclick="setMode('p2p')">2 Players 👥</button>
+        </div>
+        <h1>Choose Your Side</h1>
+        <div class="setup-group">
+            <button id="side-white" onclick="setSide('white')">White ⚪</button>
+            <button id="side-black" onclick="setSide('black')">Black ⚫</button>
+        </div>
+        <br>
+        <button id="startBtn" onclick="startGame()" style="display:none; background:#238636; color:white; padding:15px; border-radius:8px;">Start Game! 🚀</button>
+    </div>
 
-<div id="board"></div>
+    <div id="gameScreen" style="display:none;">
+        <div id="board" class="board"></div>
+        <div class="sidebar">
+            <div id="status" class="status">✨ White's Turn</div>
+            <div class="controls">
+                <button class="btn-restart" onclick="location.reload()">Reset Setup 🔄</button>
+                <button class="btn-hint" onclick="useHint()">💡 Hint (<span id="hintCount">3</span>)</button>
+            </div>
+        </div>
+    </div>
 
-<!-- ✅ chess script only -->
-<script src="chess.js"></script>
-
+    <script src="chess.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>

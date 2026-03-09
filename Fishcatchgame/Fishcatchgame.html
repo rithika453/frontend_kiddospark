@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiddospark+ | Fish Catch Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --coral:  #ff6f61;
+    --yellow: #FFD93D;
+    --green:  #6BCB77;
+    --ocean:  #0077be;
+    --deep:   #003f6e;
+    --white:  #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0a1628 0%, #0d2b4e 40%, #003f6e 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ── Animated water bubbles background ── */
+  .bubbles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .bubble {
+    position: absolute;
+    bottom: -60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: rise linear infinite;
+  }
+  .bubble:nth-child(1)  { width:18px; height:18px; left:8%;   animation-duration:7s;  animation-delay:0s;   }
+  .bubble:nth-child(2)  { width:10px; height:10px; left:18%;  animation-duration:9s;  animation-delay:1s;   }
+  .bubble:nth-child(3)  { width:24px; height:24px; left:28%;  animation-duration:6s;  animation-delay:2s;   }
+  .bubble:nth-child(4)  { width:14px; height:14px; left:40%;  animation-duration:11s; animation-delay:0.5s; }
+  .bubble:nth-child(5)  { width:20px; height:20px; left:55%;  animation-duration:8s;  animation-delay:3s;   }
+  .bubble:nth-child(6)  { width:12px; height:12px; left:65%;  animation-duration:10s; animation-delay:1.5s; }
+  .bubble:nth-child(7)  { width:28px; height:28px; left:75%;  animation-duration:7s;  animation-delay:2.5s; }
+  .bubble:nth-child(8)  { width:16px; height:16px; left:85%;  animation-duration:9s;  animation-delay:4s;   }
+  .bubble:nth-child(9)  { width:22px; height:22px; left:92%;  animation-duration:6s;  animation-delay:1s;   }
+  .bubble:nth-child(10) { width: 8px; height: 8px; left:50%;  animation-duration:12s; animation-delay:3.5s; }
+  @keyframes rise {
+    0%   { transform: translateY(0) scale(1);    opacity: 0.6; }
+    80%  { opacity: 0.3; }
+    100% { transform: translateY(-110vh) scale(1.3); opacity: 0; }
+  }
+
+  /* ── TOP NAV ── */
+  .top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    padding: 18px 20px 0;
+    position: relative;
+    z-index: 20;
+  }
+  .nav-btn {
+    background: var(--coral);
+    color: var(--white);
+    border: none;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #c9574c;
+    transition: transform .15s, background .2s, box-shadow .15s;
+  }
+  .nav-btn:hover  { background: var(--yellow); color: #333; transform: translateY(-3px); box-shadow: 0 8px 0 #c9a800; }
+  .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #c9574c; }
+
+  /* ── PAGE TITLE ── */
+  .page-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    color: #fff;
+    text-align: center;
+    margin: 18px 0 4px;
+    position: relative; z-index: 1;
+    text-shadow: 0 0 20px rgba(100,200,255,0.5), 2px 2px 0 rgba(0,0,0,0.3);
+    animation: titleDrop .6s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes titleDrop {
+    from { opacity: 0; transform: translateY(-20px) scale(.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ── GAME WRAPPER ── */
+  .game-wrapper {
+    position: relative;
+    z-index: 10;
+    margin: 16px auto 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── SCORE BAR (above canvas) ── */
+  .score-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .score-pill {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 40px;
+    padding: 8px 22px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .score-pill span { color: var(--yellow); font-size: 1.3rem; }
+
+  /* ── CANVAS CONTAINER ── */
+  #game-container {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 4px rgba(255,255,255,0.15),
+      0 0 0 8px rgba(0,119,190,0.3),
+      0 24px 60px rgba(0,0,0,0.5),
+      0 0 80px rgba(0,150,255,0.2);
+  }
+
+  canvas {
+    display: block;
+    border-radius: 16px;
+    cursor: crosshair;
+  }
+
+  /* ── LEVEL UP POPUP ── */
+  .popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Fredoka One', cursive;
+    color: var(--yellow);
+    font-size: 72px;
+    font-weight: bold;
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.4), 0 0 40px rgba(255,217,61,0.8);
+    z-index: 100;
+    pointer-events: none;
+    white-space: nowrap;
+    animation: popEffect 1.5s ease-out forwards;
+  }
+  @keyframes popEffect {
+    0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+    40%  { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+    70%  { transform: translate(-50%, -50%) scale(0.95); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+  }
+
+  /* ── OVERLAYS (Start / Game Over) ── */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(0,30,70,0.92), rgba(0,10,40,0.95));
+    backdrop-filter: blur(4px);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    border-radius: 16px;
+    z-index: 50;
+  }
+
+  .overlay-emoji { font-size: 4rem; animation: bob 2s ease-in-out infinite; }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+  .overlay h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+    text-align: center;
+  }
+  .overlay p {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.75);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .overlay-score {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 12px 32px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    color: var(--yellow);
+  }
+
+  .overlay-btn {
+    padding: 14px 40px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    background: var(--yellow);
+    color: #333;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #c9a800, 0 10px 24px rgba(0,0,0,0.3);
+    transition: transform .15s, box-shadow .15s;
+    letter-spacing: .3px;
+  }
+  .overlay-btn:hover  { transform: translateY(-3px); box-shadow: 0 9px 0 #c9a800, 0 14px 30px rgba(0,0,0,0.3); background: #ffe040; }
+  .overlay-btn:active { transform: translateY(2px); box-shadow: 0 3px 0 #c9a800; }
+
+  /* Fish tip */
+  .fish-tip {
+    font-size: .85rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hidden { display: none !important; }
+
+  /* ── OLD ui div hidden (score shown in score-bar above) ── */
+  #ui { display: none; }
+</style>
+</head>
+
+<body>
+
+  <!-- Animated bubbles -->
+  <div class="bubbles">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div>
+  </div>
+
+  <!-- TOP NAV -->
+  <div class="top-bar">
+    <button class="nav-btn" onclick="window.location.href='../game.html'">⬅ Back</button>
+    <button class="nav-btn" onclick="window.location.href='../login.html'">🚪 Logout</button>
+  </div>
+
+  <!-- TITLE -->
+  <h1 class="page-title">🐠 Fish Catch Game</h1>
+
+  <div class="game-wrapper">
+
+    <!-- SCORE BAR -->
+    <div class="score-bar">
+      <div class="score-pill">🎯 Score <span id="score">0</span></div>
+      <div class="score-pill">⚡ Level <span id="level">1</span></div>
+    </div>
+
+    <!-- CANVAS + OVERLAYS -->
+    <div id="game-container">
+
+      <!-- hidden legacy ui div (JS reads from it) -->
+      <div id="ui">Score: <span id="scoreHidden">0</span> | Level: <span id="levelHidden">1</span></div>
+
+      <!-- Level Up popup -->
+      <div id="levelUpText" class="popup hidden">LEVEL UP!</div>
+
+      <canvas id="gameCanvas"></canvas>
+
+      <!-- START SCREEN -->
+      <div id="startScreen" class="overlay">
+        <div class="overlay-emoji">🐠</div>
+        <h1>Fish Catch!</h1>
+        <p>Click the fish before they escape! 🎣</p>
+        <div class="fish-tip">🐟 Golden fish = 30 pts &nbsp;|&nbsp; 🐠 Regular fish = 10 pts</div>
+        <button class="overlay-btn" onclick="startGame()">🎮 Start Game</button>
+      </div>
+
+      <!-- GAME OVER SCREEN -->
+      <div id="gameOverScreen" class="overlay hidden">
+        <div class="overlay-emoji">😢</div>
+        <h1>A fish escaped!</h1>
+        <div class="overlay-score" id="finalScoreDisplay">Score: 0</div>
+        <button class="overlay-btn" onclick="resetGame()">🔄 Try Again</button>
+        <button class="overlay-btn" style="background:rgba(255,255,255,0.15);color:#fff;box-shadow:none;margin-top:-6px;"
+                onclick="window.location.href='../game.html'">⬅ Back to Games</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="Fishcatchgame.js"></script>
+  <script src="../script.js"></script>
+
+  <script>
+    // Sync score/level from JS to the styled score-bar pills
+    const scoreEl = document.getElementById('score');
+    const levelEl = document.getElementById('level');
+
+    // Observe score changes and mirror to final score display on game over
+    const gameOverObserver = new MutationObserver(() => {
+      const go = document.getElementById('gameOverScreen');
+      if (!go.classList.contains('hidden')) {
+        document.getElementById('finalScoreDisplay').textContent =
+          '🎯 Final Score: ' + scoreEl.textContent;
+      }
+    });
+    gameOverObserver.observe(document.getElementById('gameOverScreen'), { attributes: true });
+  </script>
+
+</body>
+</html>
+

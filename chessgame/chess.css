@@ -1,194 +1,82 @@
 :root {
     --light: #f0d9b5;
     --dark: #b58863;
-    --hl: #f6f669;
     --sel: #82c0ff;
-    --last-move: #90ee90; /* Light Green for last move highlight */
-    --white-piece: #ffffff;
-    --black-piece: #000000;
-    --coord-color: #e6edf3; /* Color for coordinates */
 }
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #1b1f24;
-    color: #e6edf3;
-    min-height: 100vh;
-    /* Centering the main content of the page */
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    color: #333;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-}
-
-/* --- Setup and Rules Screens --- */
-#setupScreen, #rulesScreen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    text-align: center;
-}
-
-#setupScreen button, #rulesScreen button {
-    margin: 8px;
-    padding: 10px 20px;
-    font-size: 16px;
-}
-
-/* Style for selected buttons in the setup screen */
-.setup-selected {
-    background: #007bff !important;
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.7);
-    transform: scale(1.05);
-    transition: all 0.1s ease-in-out;
-}
-
-/* --- Game Screen and Board Layout --- */
-#gameScreen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
-}
-
-#boardContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px; 
-}
-
-.board {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    width: 480px;
-    height: 480px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    border-radius: 8px;
+    height: 100vh;
     overflow: hidden;
 }
 
-/* --- Coordinates --- */
-#ranks {
-    width: 20px;
-    height: 480px; 
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: flex-end; 
-    font-size: 14px;
-    font-weight: bold;
-    color: var(--coord-color);
+#setupScreen { text-align: center; }
+
+#setupScreen h1 { color: #ff6f61; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+#setupScreen button { margin: 5px; padding: 12px 20px; background: #ffd54f; color: #333; border: 2px solid #ff6f61; }
+#setupScreen button:hover { background: #ff6f61; color: white; }
+
+.setup-selected {
+    background-color: #007bff !important;
+    color: white !important;
+    border: 2px solid white !important;
 }
 
-#files {
-    width: 480px; 
-    height: 20px;
-    display: flex;
-    flex-direction: row; 
-    justify-content: space-around;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-    color: var(--coord-color);
-    margin-top: 5px; 
-}
+#gameScreen { display: flex; flex-direction: row; gap: 30px; align-items: flex-start; padding: 20px; }
 
-#ranks > span, #files > span {
-    /* Ensures coordinate labels are correctly spaced */
-    display: block; 
-    height: 12.5%; 
-    line-height: calc(480px / 8); /* Adjust for vertical centering */
-    box-sizing: border-box;
-}
-
-#files > span {
-    height: 100%;
-    width: 12.5%;
-    text-align: center;
-    line-height: 20px;
-}
-
-/* --- Tiles and Pieces --- */
-.tile {
+.board {
     display: grid;
-    place-items: center;
-    /* Use a standard chess font for best Unicode piece rendering */
-    font-family: "Segoe UI Symbol", "Noto Sans Symbols", sans-serif;
-    font-size: 40px; /* Increased font size for better visibility */
-    cursor: pointer;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    width: 400px; height: 400px;
+    border: 8px solid #ff6f61;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    user-select: none;
+    background: #fff;
+}
+
+.tile {
+    width: 50px; height: 50px; 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 38px; cursor: pointer;
     position: relative;
 }
 
-.tile.light { background: var(--light); }
-.tile.dark  { background: var(--dark); }
+.tile.light { background: #ffe0b2; }
+.tile.dark { background: #ffcc80; }
+.tile.selected { background: #82c0ff !important; }
+.tile:hover { transform: scale(1.1); }
 
-/* Last move highlight (mixes highlight color with tile color) */
-.tile.last-move.light { background: color-mix(in srgb, var(--light), var(--last-move) 50%); }
-.tile.last-move.dark  { background: color-mix(in srgb, var(--dark), var(--last-move) 50%); }
-
-
-.tile.selected { outline: 4px solid var(--sel); outline-offset: -4px; }
-
-/* Highlight for valid moves */
+/* Hint dot logic */
 .tile.highlight::after {
-    content: "";
+    content: ""; width: 15px; height: 15px;
+    background: rgba(0,0,0,0.2); border-radius: 50%;
     position: absolute;
-    width: 70%;
-    height: 70%;
-    border-radius: 50%;
-    background: rgba(246, 246, 105, 0.7);
+    pointer-events: none;
 }
 
-/* Highlight for valid captures */
-.tile.capture::after {
-    content: "";
-    position: absolute;
-    inset: 6px;
-    border: 4px solid rgba(246, 246, 105, 0.9);
-    border-radius: 4px;
-}
-
-/* Piece Colors */
-.piece.white { color: var(--white-piece); text-shadow: 0 0 2px #222; }
-.piece.black { color: var(--black-piece); text-shadow: 0 0 2px #ddd; }
-
-/* --- Status and Controls --- */
-.status {
-    margin-top: 12px;
-    padding: 12px;
-    background: #141a21;
-    border-radius: 6px;
-    width: 480px;
-    text-align: center;
-}
-.controls {
-    margin-top: 12px;
+/* Piece click aagadha prachanai-a idhu sari pannum */
+.piece {
+    pointer-events: none; 
+    user-select: none;
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
 }
-button {
-    background: #238636;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-button:hover {
-    background: #2ea043;
-}
-button.secondary {
-    background: #30363d;
-    color: #c9d1d9;
-}
-button.secondary:hover {
-    background: #40464d;
-}
+
+.sidebar { display: flex; flex-direction: column; width: 220px; gap: 15px; }
+.status { background: #ffeb3b; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; color: #333; }
+button { padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
+button:hover { transform: scale(1.05); }
+.btn-restart { background: #238636; color: white; }
+.btn-hint { background: #f39c12; color: white; }
+
+.piece.white { color: #fff; text-shadow: 1px 1px 2px #000; }
+.piece.black { color: #000; text-shadow: 0px 0px 1px #fff; }

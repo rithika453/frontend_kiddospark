@@ -1,63 +1,112 @@
-const animals = [
-  { word: "cow", hint: 'This animal says "Moo"', soundId: "cowSound", img: "cow.png" },
-  { word: "dog", hint: 'This animal says "Bow Bow"', soundId: "dogSound", img: "dog.png" },
-  { word: "cat", hint: 'This animal says "Meow"', soundId: "catSound", img: "cat.png" },
-  { word: "sheep", hint: 'This animal says "Baa"', soundId: "sheepSound", img: "sheep.png" },
-  { word: "goat", hint: 'This animal says "Maa"', soundId: "goatSound", img: "goat.png" },
-  { word: "rabbit", hint: 'This animal hops quietly', soundId: "rabbitSound", img: "rabbit.png" },
-  { word: "elephant", hint: 'This animal trumpets loudly', soundId: "elephantSound", img: "elephant.png" },
-  { word: "pig", hint: 'This animal says "Oink"', soundId: "pigSound", img: "pig.png" },
-  { word: "horse", hint: 'This animal says "Neigh"', soundId: "horseSound", img: "horse.png" },
-  { word: "donkey", hint: 'This animal says "Hee-Haw"', soundId: "donkeySound", img: "donkey.png" },
-  { word: "lion", hint: 'This animal roars loudly', soundId: "lionSound", img: "lion.png" },
-  { word: "tiger", hint: 'This animal growls fiercely', soundId: "tigerSound", img: "tiger.png" }
+const allLevels = [
+    { word: "cow", hint: 'This animal says "Moo"', audioId: "cowSound", img: "images/cow.jpg" },
+    { word: "dog", hint: 'This animal says "Bow Bow"', audioId: "dogSound", img: "images/dog.jpg" },
+    { word: "cat", hint: 'This animal says "Meow"', audioId: "catSound", img: "images/cat.jpg" },
+    { word: "sheep", hint: 'This animal says "Baa"', audioId: "sheepSound", img: "images/sheep.jpg" },
+    { word: "goat", hint: 'This animal says "Maa"', audioId: "goatSound", img: "images/goat.jpg" },
+    { word: "rabbit", hint: 'This animal hops quietly', audioId: "rabbitSound", img: "images/rabbit.jpg" },
+    { word: "elephant", hint: 'This animal trumpets loudly', audioId: "elephantSound", img: "images/elephant.jpg" },
+    { word: "pig", hint: 'This animal says "Oink"', audioId: "pigSound", img: "images/pig.jpg" },
+    { word: "horse", hint: 'This animal says "Neigh"', audioId: "horseSound", img: "images/horse.jpg" },
+    { word: "donkey", hint: 'This animal says "Hee-Haw"', audioId: "donkeySound", img: "images/donkey.jpg" },
+    { word: "lion", hint: 'This animal roars loudly', audioId: "lionSound", img: "images/lion.png" },
+    { word: "tiger", hint: 'This animal growls fiercely', audioId: "tigerSound", img: "images/tiger.png" }
 ];
 
-let currentIndex = 0;
+let unlockedLevels = 1;
+let currentIdx = 0;
+let activeAudio = null;
 
-function loadAnimal() {
-  const currentAnimal = animals[currentIndex];
-  document.getElementById("hint").textContent = "Hint: " + currentAnimal.hint;
-  document.getElementById("guessInput").value = "";
-  document.getElementById("result").textContent = "";
-  document.getElementById("animalDisplay").classList.add("hidden");
+function initMenu() {
+    document.getElementById('message-modal').classList.add('hidden');
+    document.getElementById('game-page').classList.add('hidden');
+    document.getElementById('level-page').classList.remove('hidden');
+    
+    const menu = document.getElementById('level-menu');
+    menu.innerHTML = "";
+    
+    for (let i = 1; i <= allLevels.length; i++) {
+        const btn = document.createElement('div');
+        btn.className = `level-card ${i > unlockedLevels ? 'locked' : ''}`;
+        btn.innerText = i > unlockedLevels ? "🔒" : i;
+        if (i <= unlockedLevels) btn.onclick = () => startGame(i - 1);
+        menu.appendChild(btn);
+    }
 }
 
-document.getElementById("submitBtn").addEventListener("click", () => {
-  const guess = document.getElementById("guessInput").value.toLowerCase();
-  const result = document.getElementById("result");
-  const display = document.getElementById("animalDisplay");
-  const image = document.getElementById("animalImage");
-  const word = document.getElementById("animalWord");
+function startGame(idx) {
+    currentIdx = idx;
+    if (activeAudio) { activeAudio.pause(); activeAudio.currentTime = 0; }
 
-  const currentAnimal = animals[currentIndex];
+    document.getElementById('level-page').classList.add('hidden');
+    document.getElementById('game-page').classList.remove('hidden');
+    
+    const level = allLevels[currentIdx];
+    document.getElementById('level-title').innerText = "Level " + (currentIdx + 1);
+    document.getElementById('hint-text').innerText = level.hint;
 
-  if (guess === currentAnimal.word) {
-    result.textContent = "Correct! 🎉";
-
-    // Play sound
-    const sound = document.getElementById(currentAnimal.soundId);
-    if (sound) {
-      sound.currentTime = 0; // restart from beginning
-      sound.play();
+    activeAudio = document.getElementById(level.audioId);
+    if (activeAudio) {
+        activeAudio.loop = true;
+        activeAudio.play().catch(e => console.log("User interaction needed"));
     }
 
-    // Show animal picture and word
-    image.src = currentAnimal.img;
-    image.alt = currentAnimal.word;
-    word.textContent = currentAnimal.word.toUpperCase();
-    display.classList.remove("hidden");
+    const optionsBox = document.getElementById('options-container');
+    optionsBox.innerHTML = "";
+    
+    let choices = generateChoices(level);
+    choices.forEach(animal => {
+        const imgBtn = document.createElement('img');
+        imgBtn.src = animal.img; // Correct folder path
+        imgBtn.className = "animal-option-img";
+        imgBtn.onclick = () => checkResult(animal.word === level.word);
+        optionsBox.appendChild(imgBtn);
+    });
+}
 
-    // Move to next animal after 2 seconds
-    setTimeout(() => {
-      currentIndex = (currentIndex + 1) % animals.length;
-      loadAnimal();
-    }, 2000);
-  } else {
-    result.textContent = "Oops! Try again.";
-    display.classList.add("hidden");
-  }
-});
+function playCurrentAudio() {
+    if (activeAudio) activeAudio.play();
+}
 
-// Start the game
-loadAnimal();
+function generateChoices(correct) {
+    let others = allLevels.filter(l => l.word !== correct.word);
+    let shuffledOthers = others.sort(() => 0.5 - Math.random()).slice(0, 2);
+    return [correct, ...shuffledOthers].sort(() => 0.5 - Math.random());
+}
+
+function checkResult(isCorrect) {
+    const modal = document.getElementById('message-modal');
+    modal.classList.remove('hidden');
+
+    if (isCorrect) {
+        if (activeAudio) activeAudio.pause();
+        document.getElementById('modal-title').innerText = "🌟 Semma! 🌟";
+        document.getElementById('modal-text').innerText = "Correct answer! Next level polama?";
+        const btn = document.getElementById('modal-btn');
+        btn.innerText = "Next Level";
+        
+        if (currentIdx + 2 > unlockedLevels) unlockedLevels = currentIdx + 2;
+
+        btn.onclick = () => {
+            modal.classList.add('hidden');
+            if (currentIdx < allLevels.length - 1) {
+                startGame(currentIdx + 1);
+            } else {
+                // Completed all levels — send score and return to menu
+                const score = (currentIdx + 1) * 100;
+                if (typeof updateScore === 'function') updateScore('soundofword', score);
+                initMenu();
+            }
+        };
+    } else {
+        document.getElementById('modal-title').innerText = "🧐 Oops! 🧐";
+        document.getElementById('modal-text').innerText = "Thappa pochu! Try again.";
+        const btn = document.getElementById('modal-btn');
+        btn.innerText = "Retry";
+        btn.onclick = () => modal.classList.add('hidden');
+    }
+}
+
+window.onload = initMenu;
+
+if (typeof updateScore === 'function') updateScore('soundofword', score);

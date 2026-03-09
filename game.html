@@ -1,96 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Kiddospark+ | Game Zone</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="stylesheet" href="style.css">
-    
-    <style>
-        /* Small addition to ensure the game cards look interactive */
-        .card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: inline-block;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .card img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Kiddospark+ | Game Zone</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<style>
+  :root {
+    --coral:  #ff6f61;
+    --yellow: #FFD93D;
+    --green:  #6BCB77;
+    --blue:   #4D96FF;
+    --white:  #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 20px 20px 0;
+    position: relative;
+    z-index: 20;
+  }
+
+  .nav-btn {
+    background: var(--coral);
+    color: var(--white);
+    border: none;
+    padding: 11px 26px;
+    border-radius: 50px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #c9574c;
+    transition: transform .15s, background .2s, box-shadow .15s;
+    letter-spacing: .4px;
+  }
+  .nav-btn:hover  { background: var(--yellow); color: #333; transform: translateY(-3px); box-shadow: 0 8px 0 #c9a800; }
+  .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #c9574c; }
+
+  .page-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #fff;
+    text-align: center;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.12);
+    margin: 28px 0 6px;
+    letter-spacing: 1px;
+    animation: titleDrop .6s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+  @keyframes titleDrop {
+    from { opacity: 0; transform: translateY(-30px) scale(.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .player-greeting {
+    text-align: center;
+    color: rgba(255,255,255,0.92);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+    animation: fadeUp .5s .2s both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 22px;
+    padding: 0 28px 48px;
+    max-width: 1080px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .game-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+    text-decoration: none;
+    display: block;
+    position: relative;
+    transition: transform .25s cubic-bezier(.175,.885,.32,1.275), box-shadow .25s, border-color .2s;
+    animation: cardPop .5s both;
+    border: 3px solid transparent;
+  }
+
+  .game-card:nth-child(1)  { animation-delay: .05s; }
+  .game-card:nth-child(2)  { animation-delay: .10s; }
+  .game-card:nth-child(3)  { animation-delay: .15s; }
+  .game-card:nth-child(4)  { animation-delay: .20s; }
+  .game-card:nth-child(5)  { animation-delay: .25s; }
+  .game-card:nth-child(6)  { animation-delay: .30s; }
+  .game-card:nth-child(7)  { animation-delay: .35s; }
+  .game-card:nth-child(8)  { animation-delay: .40s; }
+  .game-card:nth-child(9)  { animation-delay: .45s; }
+  .game-card:nth-child(10) { animation-delay: .50s; }
+
+  @keyframes cardPop {
+    from { opacity: 0; transform: scale(.8) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .game-card:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    border-color: var(--yellow);
+  }
+
+  .card-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+    border-radius: 22px;
+  }
+  .game-card:hover .card-shine { opacity: 1; }
+
+  .card-img-wrap { overflow: hidden; }
+  .game-card img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    display: block;
+    transition: transform .35s ease;
+  }
+  .game-card:hover img { transform: scale(1.08); }
+
+  .card-label {
+    padding: 12px 14px 14px;
+    text-align: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: .95rem;
+    color: #444;
+  }
+
+  .game-card::after {
+    content: '';
+    display: block;
+    height: 5px;
+    background: linear-gradient(90deg, var(--coral), var(--yellow));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s ease;
+    margin-top: -2px;
+  }
+  .game-card:hover::after { transform: scaleX(1); }
+
+  .overlay {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    padding-bottom: 40px;
+  }
+</style>
 </head>
 
 <body class="game-page">
 
-    <div class="page-bg">
-        <img src="images/background2.png" alt="Background">
-    </div>
+<div class="page-bg">
+  <img src="images/background2.png" alt="Background">
+</div>
 
-    <div class="overlay">
+<div class="overlay">
 
-        <div class="top-bar">
-            <button class="nav-btn" onclick="goTrack()">Track</button>
-            <button class="nav-btn" onclick="goBack()">Logout</button>
-            <button class="nav-btn" onclick="goChallenge()">Challenge</button>
-        </div>
+  <div class="top-bar">
+    <button class="nav-btn" onclick="goTrack()">🏅 Track</button>
+    <button class="nav-btn" onclick="goBack()">🚪 Logout</button>
+    <button class="nav-btn" onclick="goChallenge()">🏆 Challenge</button>
+  </div>
 
-        <h1 class="title" style="margin-top: 20px; text-align: center; font-family: 'Comic Sans MS', cursive;">Fun Kids Game Zone</h1>
+  <h1 class="page-title">Fun Kids Game Zone</h1>
+  <p class="player-greeting" id="greetingText">Choose a game and start playing! 🎉</p>
 
-        <div class="game-grid">
+  <div class="game-grid">
 
-            <a href="chessgame/chess.html" class="card">
-                <img src="images/chess game.png" alt="Chess Game">
-            </a>
+    <a href="chessgame/chess.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/chess game.png" alt="Chess Game"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">♟️ Chess Grandmaster</div>
+    </a>
 
-            <a href="magicwords/magicwords.html" class="card">
-                <img src="images/magic words.png" alt="Magic Words">
-            </a>
+    <a href="magicwords/magicwords.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/magic words.png" alt="Magic Words"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">🔤 Magic Words</div>
+    </a>
 
-            <a href="maze/maze.html" class="card">
-                <img src="images/maze game.png" alt="Maze Game">
-            </a>
+    <a href="maze/maze.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/mazegame.jpg" alt="Maze Game"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">🌀 Maze Game</div>
+    </a>
 
-            <a href="oddone/oddone.html" class="card">
-                <img src="images/odd one out.png" alt="Odd One Out">
-            </a>
+    <a href="oddone/oddone.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/odd one out.jpg" alt="Odd One Out"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">🍎 Odd One Out</div>
+    </a>
 
-            <a href="connection/connection.html" class="card">
-                <img src="images/connection game.jpg" alt="Connection Game">
-            </a>
+    <a href="connection/connection.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/connection game.jpg" alt="Connection Game"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">🔗 Connection Game</div>
+    </a>
 
-        </div>
+    <a href="Fishcatchgame/Fishcatchgame.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/Fishcatch.jpg" alt="Fish Catch Game"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">🐠 Fish Catch</div>
+    </a>
 
-    </div>
+    <a href="memorymatching/memorymatching.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/memorymatching.jpg" alt="Memory Matching"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">🧠 Memory Matching</div>
+    </a>
 
-    <script>
-        function goTrack() {
-            window.location.href = "track.html";
-        }
+    <a href="soundofword/soundofword.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/animal sound.png" alt="Animal Sounds"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">🐄 Animal Sounds</div>
+    </a>
 
-        function goBack() {
-            // Usually logout clears session, but for now it redirects
-            window.location.href = "login.html";
-        }
+    <a href="Jigsaw_puzzle/Jigsaw_puzzle.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/jigsaw_puzzle.jpg" alt="Jigsaw Puzzle"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">🧩 Jigsaw Puzzle</div>
+    </a>
 
-        function goChallenge() {
-            alert("Challenge mode coming soon! 🚀 Keep practicing!");
-        }
-    </script>
+    <a href="Balloon pop/Balloon pop.html" class="game-card">
+      <div class="card-img-wrap"><img src="images/balloon pop.jpg" alt="Balloon Pop"></div>
+      <div class="card-shine"></div>
+      <div class="card-label">🎈 Balloon Pop</div>
+    </a>
+
+  </div>
+</div>
+
+<script>
+  const name = localStorage.getItem('playerName');
+  if (name) {
+    document.getElementById('greetingText').textContent =
+      `Welcome back, ${name}! 🌟 Pick a game and have fun!`;
+  }
+
+  function goTrack()     { window.location.href = "track.html"; }
+  function goBack()      { window.location.href = "login.html"; }
+  function goChallenge() { window.location.href = "challenge/challenge.html"; }
+</script>
 
 </body>
 </html>

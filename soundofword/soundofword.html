@@ -2,37 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Kids Word Puzzle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kids Animal Sound Game</title>
   <link rel="stylesheet" href="soundofword.css">
 </head>
 <body>
-  <div class="game-container">
-    <h1>Guess the Animal!</h1>
-    <p id="hint"></p>
-    <input type="text" id="guessInput" placeholder="Type your guess here">
-    <button id="submitBtn">Submit</button>
-    <p id="result"></p>
-    <div id="animalDisplay" class="hidden">
-      <img id="animalImage" alt="Animal picture">
-      <p id="animalWord"></p>
+
+  <div id="level-page" class="game-container">
+    <h1>🦁 Choose a Level 🦁</h1>
+    <div id="level-menu" class="level-grid"></div>
+  </div>
+
+  <div id="game-page" class="game-container hidden">
+    <h2 id="level-title">Level 1</h2>
+    <div class="question-section">
+      <button id="speakerBtn" onclick="playCurrentAudio()">🔊</button>
+      <p id="hint-text"></p>
+    </div>
+    <div id="options-container" class="options-grid"></div>
+  </div>
+
+  <div id="message-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="modal-title"></h2>
+      <p id="modal-text"></p>
+      <button id="modal-btn">Next Level</button>
     </div>
   </div>
 
-<!-- Animal sounds -->
-<audio id="cowSound" src="audio/cow.mp3"></audio>
-<audio id="dogSound" src="audio/dog.mp3"></audio>
-<audio id="catSound" src="sounds/cat.mp3"></audio>
-<audio id="sheepSound" src="sounds/sheep.mp3"></audio>
-<audio id="goatSound" src="sounds/goat.mp3"></audio>
-<audio id="rabbitSound" src="sounds/rabbit.mp3"></audio>
-<audio id="elephantSound" src="sounds/elephant.mp3"></audio>
-<audio id="pigSound" src="sounds/pig.mp3"></audio>
-<audio id="horseSound" src="sounds/horse.mp3"></audio>
-<audio id="donkeySound" src="sounds/donkey.mp3"></audio>
-<audio id="lionSound" src="sounds/lion.mp3"></audio>
-<audio id="tigerSound" src="sounds/tiger.mp3"></audio>
-
-
+  <div id="audio-container" style="display:none;">
+    <audio id="cowSound" src="audio/cow.mp3"></audio>
+    <audio id="dogSound" src="audio/dog.mp3"></audio>
+    <audio id="catSound" src="audio/cat.mp3"></audio>
+    <audio id="sheepSound" src="audio/sheep.mp3"></audio>
+    <audio id="goatSound" src="audio/goat.mp3"></audio>
+    <audio id="rabbitSound" src="audio/rabbit.mp3"></audio>
+    <audio id="elephantSound" src="audio/elephant.mp3"></audio>
+    <audio id="pigSound" src="audio/pig.mp3"></audio>
+    <audio id="horseSound" src="audio/horse.mp3"></audio>
+    <audio id="donkeySound" src="audio/donkey.mp3"></audio>
+    <audio id="lionSound" src="audio/lion.mp3"></audio>
+    <audio id="tigerSound" src="audio/tiger.mp3"></audio>
+  </div>
 
   <script src="soundofword.js"></script>
 </body>

@@ -1,0 +1,96 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  /* soft gradient background covers entire viewport */
+  background: linear-gradient(135deg, #e0f7fa, #fff);
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  color: #333;
+}
+
+#status {
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.controls {
+  margin: 15px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.controls select,
+.controls button {
+  padding: 6px 12px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #888;
+}
+
+.controls button {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.controls button:hover {
+  background-color: #45a049;
+}
+
+#board {
+  display: grid;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 5px; /* equal spacing */
+}
+
+.card {
+  background-color: #4caf50;
+  border-radius: 6px;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: black;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.card.flipped {
+  background-color: #f9f9f9;
+  transform: scale(1.05);
+}
+
+.card:hover {
+  transform: scale(1.1);
+}
+
+/* wrapper around the game for padding and a card-like appearance */
+.game-wrapper {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  max-width: 600px;
+  width: 100%;
+}
+
+
+
+
+
+
+

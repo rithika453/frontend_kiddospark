@@ -82,6 +82,8 @@ function nextQuestion() {
 }
 
 function finishGame() {
+    // update tracking
+    if (typeof updateScore === 'function') updateScore('oddone', totalPoints);
     document.querySelector('.game-box').innerHTML = `
         <h1 style="color:#6c5ce7; font-size:30px;">GAME OVER!</h1>
         <p style="font-size:20px; font-weight:bold;">Final Score: ${totalPoints}</p>
@@ -90,3 +92,4 @@ function finishGame() {
 }
 
 initGame();
+if (typeof updateScore === 'function') updateScore('oddone', score);

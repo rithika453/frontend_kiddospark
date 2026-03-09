@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balloon Master: Kids Adventure</title>
+    <style>
+        :root {
+            --primary: #4facfe;
+            --danger: #ff4757;
+            --success: #2ed573;
+            --yellow: #feca57;
+            --purple: #a29bfe;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+            overflow: hidden;
+            transition: background 1s ease;
+        }
+
+        .sky-1 { background: linear-gradient(to bottom, #87CEEB, #E0F7FA); }
+        .sky-2 { background: linear-gradient(to bottom, #ff9a9e, #fad0c4); }
+        .sky-3 { background: linear-gradient(to bottom, #a1c4fd, #c2e9fb); }
+        .sky-4 { background: linear-gradient(to bottom, #667eea, #764ba2); }
+
+        #menu-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 2000; display: flex;
+            flex-direction: column; align-items: center; padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .level-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 15px; margin-top: 20px;
+        }
+
+        .level-card {
+            width: 65px; height: 65px; background: #f0f0f0;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; cursor: not-allowed; font-weight: bold;
+            color: #ccc; border: 4px solid #ddd;
+        }
+
+        .level-card.unlocked {
+            background: var(--yellow); color: #57606f; cursor: pointer;
+            border-color: #ffa502; box-shadow: 0 4px 0 #e67e22;
+        }
+
+        #hud {
+            position: fixed; top: 15px; width: 100%;
+            display: none; justify-content: space-around;
+            align-items: center; z-index: 100;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.9); padding: 10px 20px;
+            border-radius: 50px; border: 3px solid var(--primary);
+            font-weight: bold;
+        }
+
+        .balloon {
+            position: absolute; width: 70px; height: 90px;
+            border-radius: 50%; cursor: pointer;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2);
+            z-index: 50;
+        }
+
+        .overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            z-index: 1000; justify-content: center; align-items: center;
+        }
+
+        .modal-content {
+            background: white; padding: 35px; border-radius: 30px;
+            text-align: center; max-width: 400px; width: 85%;
+            border: 8px solid var(--primary);
+        }
+
+        .btn { padding: 15px 30px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; margin: 10px; }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-retry { background: var(--danger); color: white; }
+
+        .option-btn {
+            display: block; width: 100%; padding: 15px;
+            margin: 10px 0; border: 3px solid #f1f2f6; border-radius: 15px;
+            background: #fff; cursor: pointer; font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body id="game-body" class="sky-1">
+
+    <div id="menu-screen">
+        <h1 style="color: var(--primary);">🎈 BALLOON MASTER 🎈</h1>
+        <div class="level-grid" id="level-grid"></div>
+        <p>Refresh page to start from Level 1</p>
+    </div>
+
+    <div id="hud">
+        <button id="home-btn" onclick="goToMenu()" style="border-radius:20px; padding:10px;">🏠 Home</button>
+        <div class="stat-box">Lvl: <span id="cur-level">1</span></div>
+        <div class="stat-box">Pop: <span id="cur-score">0</span>/10</div>
+        <div class="stat-box" id="lives-box">❤️ ❤️ ❤️</div>
+    </div>
+
+    <div id="game-modal" class="overlay">
+        <div class="modal-content" id="modal-body"></div>
+    </div>
+
+    <script>
+        let currentLevel = 1;
+        let score = 0;
+        let lives = 3;
+        let isPaused = false;
+        let speed = 1.0; 
+        let unlockedLevels = 1;
+
+        const popSound = new Audio("Balloon Pop 4.mp3");
+
+        // Question Pools
+        const easyPool = [
+            {q: "What color is an Apple?", o: ["Red", "Blue", "Black"], a: "Red"},
+            {q: "1 + 1 = ?", o: ["1", "2", "3"], a: "2"},
+            {q: "Which one is a cat?", o: ["🐶", "🐱", "🐷"], a: "🐱"},
+            {q: "Is the Sun hot or cold?", o: ["Hot", "Cold"], a: "Hot"}
+        ];
+
+        const normalPool = [
+            {q: "Which animal says 'Moo'?", o: ["Dog", "Cow", "Cat"], a: "Cow"},
+            {q: "What is 10 + 5?", o: ["12", "15", "18"], a: "15"},
+            {q: "How many days in a week?", o: ["5", "6", "7"], a: "7"},
+            {q: "Opposite of 'Big'?", o: ["Small", "Large", "Tall"], a: "Small"}
+        ];
+
+        let availableEasy = [...easyPool];
+        let availableNormal = [...normalPool];
+
+        function playPopSound() {
+            popSound.currentTime = 0;
+            popSound.play().catch(e => {});
+        }
+
+        function initMenu() {
+            const grid = document.getElementById('level-grid');
+            grid.innerHTML = '';
+            for(let i=1; i<=20; i++) {
+                const div = document.createElement('div');
+                div.className = `level-card ${i <= unlockedLevels ? 'unlocked' : ''}`;
+                div.textContent = i;
+                if(i <= unlockedLevels) div.onclick = () => startLevel(i);
+                grid.appendChild(div);
+            }
+        }
+
+        function startLevel(lvl) {
+            currentLevel = lvl;
+            score = 0;
+            lives = 3;
+            isPaused = false;
+            
+            // Level 1-5 is slower (0.8 to 1.5), Level 6+ is faster
+            speed = lvl <= 5 ? 0.8 + (lvl * 0.15) : 1.2 + (lvl * 0.3);
+            
+            document.querySelectorAll('.balloon').forEach(b => b.remove());
+            document.getElementById('game-modal').style.display = 'none';
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('hud').style.display = 'flex';
+            
+            let bg = lvl <= 5 ? 'sky-1' : lvl <= 10 ? 'sky-2' : lvl <= 15 ? 'sky-3' : 'sky-4';
+            document.getElementById('game-body').className = bg;
+
+            updateHUD();
+            spawnLoop();
+        }
+
+        function updateHUD() {
+            document.getElementById('cur-level').textContent = currentLevel;
+            document.getElementById('cur-score').textContent = score;
+            document.getElementById('lives-box').textContent = "❤️ ".repeat(lives);
+        }
+
+        function createBalloon() {
+            if(isPaused || lives <= 0) return;
+            const b = document.createElement('div');
+            b.className = 'balloon';
+            b.style.left = Math.random() * (window.innerWidth - 80) + 'px';
+            b.style.top = window.innerHeight + 'px';
+            b.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+            
+            b.onclick = () => {
+                if(isPaused) return;
+                playPopSound();
+                score++;
+                updateHUD();
+                b.remove();
+                if(score === 5) showQuestion();
+                if(score >= 10) showLevelComplete();
+            }
+            document.body.appendChild(b);
+            
+            let top = window.innerHeight;
+            const move = setInterval(() => {
+                if(isPaused) return;
+                top -= speed;
+                b.style.top = top + 'px';
+                if(top < -120) {
+                    clearInterval(move);
+                    if(b.parentNode) { b.remove(); loseLife(); }
+                }
+                if(lives <= 0 || !document.body.contains(b)) clearInterval(move);
+            }, 10);
+        }
+
+        function loseLife() {
+            lives--;
+            updateHUD();
+            if(lives <= 0) showGameOver();
+        }
+
+        function showQuestion() {
+            isPaused = true;
+            let q;
+            
+            if(currentLevel <= 5) {
+                if(availableEasy.length === 0) availableEasy = [...easyPool];
+                const idx = Math.floor(Math.random() * availableEasy.length);
+                q = availableEasy.splice(idx, 1)[0];
+            } else {
+                if(availableNormal.length === 0) availableNormal = [...normalPool];
+                const idx = Math.floor(Math.random() * availableNormal.length);
+                q = availableNormal.splice(idx, 1)[0];
+            }
+            
+            let html = `<h2>${q.q}</h2>`;
+            q.o.forEach(opt => html += `<button class="option-btn" onclick="checkAnswer('${opt}', '${q.a}')">${opt}</button>`);
+            
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('game-modal').style.display = 'flex';
+        }
+
+        function checkAnswer(chosen, correct) {
+            if(chosen === correct) {
+                document.getElementById('game-modal').style.display = 'none';
+                isPaused = false;
+            } else {
+                lives--;
+                updateHUD();
+                if(lives <= 0) {
+                    showGameOver();
+                } else {
+                    document.getElementById('game-modal').style.display = 'none';
+                    isPaused = false;
+                }
+            }
+        }
+
+        function showLevelComplete() {
+            isPaused = true;
+            if(typeof updateScore === 'function') updateScore('Balloon pop', currentLevel);
+            if(currentLevel === unlockedLevels && unlockedLevels < 20) unlockedLevels++;
+            document.getElementById('modal-body').innerHTML = `
+                <h2 style="color:var(--success)">Level Clear!</h2>
+                <button class="btn btn-main" onclick="startLevel(${currentLevel + 1})">Next Level</button>
+            `;
+            document.getElementById('game-modal').style.display = 'flex';
+        }
+
+        function showGameOver() {
+            isPaused = true;
+            if(typeof updateScore === 'function') updateScore('Balloon pop', currentLevel);
+            document.getElementById('modal-body').innerHTML = `
+                <h2 style="color:var(--danger)">TRY AGAIN!</h2>
+                <p>No more lives left ❤️</p>
+                <button class="btn btn-retry" onclick="startLevel(${currentLevel})">Retry Level</button>
+                <button class="btn btn-main" onclick="goToMenu()">Home</button>
+            `;
+            document.getElementById('game-modal').style.display = 'flex';
+        }
+
+        function goToMenu() {
+            isPaused = true;
+            document.getElementById('game-modal').style.display = 'none';
+            document.getElementById('hud').style.display = 'none';
+            document.getElementById('menu-screen').style.display = 'flex';
+            document.querySelectorAll('.balloon').forEach(b => b.remove());
+            initMenu();
+        }
+
+        function spawnLoop() {
+            if(document.getElementById('hud').style.display === 'flex' && !isPaused) {
+                createBalloon();
+                let rate = currentLevel <= 5 ? 1800 : 1500 / (1 + currentLevel * 0.1);
+                setTimeout(spawnLoop, rate);
+            } else if (isPaused) {
+                setTimeout(spawnLoop, 100);
+            }
+        }
+
+        initMenu();
+        if (typeof updateScore === 'function') updateScore('balloon', score); 
+        // when you finish a level or run out of lives, call
+        // if(typeof updateScore === 'function') updateScore('Balloon pop', currentLevel);
+    </script>
+    <script src="../script.js"></script>
+</body>
+</html>

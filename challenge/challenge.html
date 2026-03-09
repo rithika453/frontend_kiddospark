@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiddospark+ | Challenge Zone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        :root {
+            --coral:  #ff6f61;
+            --yellow: #ffeb3b;
+            --green:  #2ecc71;
+            --orange: #f39c12;
+            --card-bg: rgba(255,255,255,0.92);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Nunito', cursive; overflow-x: hidden; }
+
+        /* Background */
+        .page-bg { position: fixed; inset: 0; z-index: -2; }
+        .page-bg img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Overlay */
+        .overlay {
+            width: 100%; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; z-index: 10; padding-bottom: 60px;
+        }
+
+        /* ── Top Nav ── */
+        .top-bar {
+            width: 100%; display: flex;
+            justify-content: center; gap: 16px;
+            padding: 18px 20px 10px;
+        }
+        .nav-btn {
+            background: var(--coral); border: none;
+            padding: 10px 22px; border-radius: 50px;
+            color: white; font-family: 'Fredoka One', cursive;
+            font-size: 1rem; cursor: pointer;
+            box-shadow: 0 4px 0 #c0392b;
+            transition: transform 0.15s, background 0.2s;
+        }
+        .nav-btn:hover { background: var(--yellow); color: #333; transform: translateY(-2px); box-shadow: 0 6px 0 #c8a000; }
+        .nav-btn:active { transform: translateY(2px); box-shadow: none; }
+
+        /* ── Title ── */
+        .page-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #fff;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.18), 0 0 30px rgba(255,180,50,0.5);
+            margin: 10px 0 4px; letter-spacing: 1px;
+        }
+        .page-subtitle {
+            color: rgba(255,255,255,0.92); font-size: 1rem;
+            font-weight: 700; margin-bottom: 22px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.25);
+            text-align: center; padding: 0 16px;
+        }
+
+        /* ── Queue Strip ── */
+        .queue-strip {
+            display: flex; gap: 12px;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 60px; padding: 10px 24px;
+            margin-bottom: 24px;
+            border: 2px solid rgba(255,255,255,0.45);
+            flex-wrap: wrap; justify-content: center;
+        }
+        .queue-slot {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            border: 3px dashed rgba(255,255,255,0.6);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; transition: all 0.3s; font-weight: bold; color: white;
+        }
+        .queue-slot.filled { background: rgba(255,255,255,0.9); border: 3px solid var(--coral); box-shadow: 0 4px 12px rgba(255,111,97,0.35); }
+        .queue-slot.done   { background: var(--green); border-color: #27ae60; }
+        .queue-slot.active { background: var(--yellow); border-color: var(--orange); animation: pulse-slot 0.9s ease-in-out infinite; }
+        @keyframes pulse-slot { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+
+        /* ── Scoreboard ── */
+        .scoreboard {
+            display: none; background: rgba(255,255,255,0.22);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 60px; padding: 12px 32px;
+            gap: 28px; margin-bottom: 24px;
+            align-items: center; justify-content: center; flex-wrap: wrap;
+        }
+        .scoreboard.visible { display: flex; }
+        .score-chip {
+            display: flex; align-items: center; gap: 8px;
+            font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+            color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        .score-chip span { font-size: 1.5rem; }
+
+        /* ── Game Cards ── */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; padding: 0 28px;
+            max-width: 1060px; width: 100%;
+        }
+        .game-card {
+            background: var(--card-bg); border-radius: 22px;
+            overflow: hidden; box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+            transition: transform 0.25s, box-shadow 0.25s;
+            position: relative; border: 3px solid transparent;
+        }
+        .game-card:hover { transform: translateY(-7px) scale(1.03); box-shadow: 0 18px 40px rgba(0,0,0,0.2); }
+        .game-card.selected { border: 3px solid var(--coral); box-shadow: 0 0 0 5px rgba(255,111,97,0.2), 0 12px 32px rgba(0,0,0,0.18); }
+        .game-card.completed { border: 3px solid var(--green); opacity: 0.7; }
+        .game-card.current {
+            border: 3px solid var(--yellow);
+            animation: glow-card 1.2s ease-in-out infinite;
+        }
+        @keyframes glow-card {
+            0%,100% { box-shadow: 0 0 0 4px rgba(255,235,59,0.3), 0 12px 32px rgba(0,0,0,0.18); }
+            50%      { box-shadow: 0 0 0 8px rgba(255,235,59,0.55), 0 18px 40px rgba(0,0,0,0.25); }
+        }
+        .card-thumb { width: 100%; height: 128px; object-fit: cover; display: block; background: #eee; }
+        .card-body  { padding: 12px 14px 16px; text-align: center; }
+        .card-title { font-family: 'Fredoka One', cursive; font-size: 1.05rem; color: #333; margin-bottom: 5px; }
+        .card-stars  { font-size: 1rem; color: #f1c40f; }
+
+        /* ── Start Button ── */
+        .start-wrap { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        #startBtn {
+            font-family: 'Fredoka One', cursive; font-size: 1.4rem; letter-spacing: 1px;
+            background: linear-gradient(135deg, #ff6f61, #ff4757);
+            color: white; border: none; padding: 18px 60px; border-radius: 60px;
+            cursor: pointer; box-shadow: 0 6px 0 #c0392b, 0 12px 30px rgba(255,111,97,0.35);
+            transition: transform 0.15s, box-shadow 0.15s; position: relative; overflow: hidden;
+        }
+        #startBtn::after {
+            content: ''; position: absolute; top: -50%; left: -60%;
+            width: 40%; height: 200%; background: rgba(255,255,255,0.22);
+            transform: skewX(-20deg); animation: shine 2.5s infinite;
+        }
+        @keyframes shine { 0% { left: -60%; } 100% { left: 140%; } }
+        #startBtn:hover  { transform: translateY(-3px); box-shadow: 0 9px 0 #c0392b, 0 18px 36px rgba(255,111,97,0.4); }
+        #startBtn:active { transform: translateY(3px);  box-shadow: 0 3px 0 #c0392b; }
+        .start-hint { color: rgba(255,255,255,0.9); font-size: 0.9rem; font-weight: 700; }
+
+        /* ════ SCORE MODAL ════ */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+            z-index: 9000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: linear-gradient(160deg, #fff9f0 0%, #fff0fa 100%);
+            border-radius: 32px; padding: 40px 44px 36px;
+            max-width: 420px; width: 90%; text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25); position: relative;
+            animation: pop-in 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+        @keyframes pop-in { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-emoji { font-size: 3.8rem; margin-bottom: 6px; display: block; }
+        .modal-title {
+            font-family: 'Fredoka One', cursive; font-size: 1.9rem;
+            color: #333; margin-bottom: 4px;
+        }
+        .modal-game-name { font-size: 0.95rem; color: #888; margin-bottom: 20px; font-weight: 700; }
+
+        .modal-stars { display: flex; justify-content: center; gap: 10px; font-size: 2.6rem; margin-bottom: 16px; }
+        .modal-stars .star { opacity: 0.2; transition: opacity 0.3s, transform 0.3s; }
+        .modal-stars .star.lit {
+            opacity: 1;
+            animation: star-pop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+        }
+        @keyframes star-pop { 0% { transform: scale(0); } 70% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+        .modal-points-row { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        .modal-stat { background: rgba(0,0,0,0.05); border-radius: 16px; padding: 12px 20px; min-width: 88px; }
+        .modal-stat .val { font-family: 'Fredoka One', cursive; font-size: 1.7rem; color: var(--coral); }
+        .modal-stat .lbl { font-size: 0.72rem; color: #999; font-weight: 700; text-transform: uppercase; }
+
+        .modal-total {
+            background: linear-gradient(135deg, #ff6f61, #ff4757);
+            color: white; border-radius: 20px; padding: 11px 22px;
+            font-family: 'Fredoka One', cursive; font-size: 1.05rem;
+            margin-bottom: 24px; display: inline-block;
+        }
+
+        .modal-next-btn {
+            font-family: 'Fredoka One', cursive; font-size: 1.15rem;
+            background: var(--coral); color: white; border: none;
+            padding: 14px 40px; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 5px 0 #c0392b; transition: transform 0.15s; width: 100%;
+        }
+        .modal-next-btn:hover  { transform: translateY(-2px); background: #ff4757; }
+        .modal-next-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #c0392b; }
+
+        /* Star picker */
+        .star-picker { display: flex; justify-content: center; gap: 14px; font-size: 2.8rem; margin-bottom: 18px; }
+        .star-picker span { cursor: pointer; opacity: 0.25; transition: opacity 0.2s, transform 0.2s; }
+        .star-picker span.active { opacity: 1; transform: scale(1.15); }
+        .picker-hint { font-size: 0.9rem; color: #aaa; margin-bottom: 18px; font-weight: 700; }
+
+        /* ════ FINAL MODAL ════ */
+        .final-box {
+            background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border-radius: 32px; padding: 44px 44px 40px;
+            max-width: 500px; width: 92%; text-align: center;
+            color: white; box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            animation: pop-in 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .final-trophy { font-size: 4.5rem; display: block; margin-bottom: 8px; animation: bounce-trophy 1s ease infinite; }
+        @keyframes bounce-trophy { 0%,100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-12px) rotate(5deg); } }
+        .final-title {
+            font-family: 'Fredoka One', cursive; font-size: 2.1rem; margin-bottom: 4px;
+            background: linear-gradient(90deg, #ffeb3b, #ff6f61, #a29bfe);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .final-player { font-size: 1rem; opacity: 0.7; margin-bottom: 24px; }
+
+        .final-results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .final-game-row {
+            background: rgba(255,255,255,0.08); border-radius: 14px;
+            padding: 10px 12px; display: flex; align-items: center; gap: 8px; text-align: left;
+        }
+        .fg-emoji { font-size: 1.3rem; }
+        .fg-name  { font-size: 0.8rem; font-weight: 700; opacity: 0.9; }
+        .fg-score { font-family: 'Fredoka One', cursive; font-size: 0.9rem; color: var(--yellow); }
+
+        .final-totals {
+            background: rgba(255,255,255,0.1); border-radius: 20px;
+            padding: 18px 24px; margin-bottom: 22px;
+            display: flex; justify-content: space-around;
+        }
+        .ft-val { font-family: 'Fredoka One', cursive; font-size: 2.2rem; color: var(--yellow); }
+        .ft-lbl { font-size: 0.78rem; opacity: 0.65; text-transform: uppercase; font-weight: 700; }
+
+        .final-rank {
+            font-family: 'Fredoka One', cursive; font-size: 1.05rem;
+            margin-bottom: 22px; padding: 8px 20px;
+            background: linear-gradient(135deg, #f39c12, #e74c3c);
+            border-radius: 30px; display: inline-block;
+        }
+        .final-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .final-btn {
+            font-family: 'Fredoka One', cursive; font-size: 0.95rem;
+            border: none; padding: 12px 24px; border-radius: 40px;
+            cursor: pointer; transition: transform 0.15s;
+        }
+        .final-btn:hover { transform: scale(1.05); }
+        .final-btn.primary   { background: var(--coral); color: white; box-shadow: 0 4px 0 #c0392b; }
+        .final-btn.secondary { background: rgba(255,255,255,0.15); color: white; border: 2px solid rgba(255,255,255,0.3); }
+
+        /* Confetti */
+        .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 9999; overflow: hidden; }
+        .conf { position: absolute; animation: fall linear forwards; }
+        @keyframes fall {
+            0%   { top: -20px; transform: rotate(0deg) translateX(0); }
+            100% { top: 110vh; transform: rotate(720deg) translateX(var(--drift)); opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .games-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 12px; }
+            .final-results-grid { grid-template-columns: 1fr; }
+            .modal-box { padding: 28px 24px; }
+        }
+    </style>
+</head>
+
+<body class="game-page">
+
+<div class="page-bg">
+    <img src="../images/background2.png" alt="Background">
+</div>
+
+<div class="confetti-container" id="confettiContainer"></div>
+
+<div class="overlay">
+
+    <!-- Top Nav -->
+    <div class="top-bar">
+        
+        <button class="nav-btn" onclick="window.location.href='../login.html'">Logout</button>
+        <button class="nav-btn" onclick="window.location.href='../game.html'">Back</button>
+    </div>
+
+    <h1 class="page-title">🏆 Challenge Zone</h1>
+    <p class="page-subtitle" id="statusText">5 random games will be chosen — beat them all!</p>
+
+    <!-- Queue Strip -->
+    <div class="queue-strip" id="queueStrip"></div>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard" id="scoreboard">
+        <div class="score-chip"><span>⭐</span>&nbsp;<span id="totalStars">0</span>&nbsp;Stars</div>
+        <div class="score-chip"><span>🎯</span>&nbsp;<span id="totalPoints">0</span>&nbsp;Points</div>
+        <div class="score-chip"><span>✅</span>&nbsp;<span id="gamesPlayed">0</span>&nbsp;/&nbsp;<span id="gamesTotal">5</span>&nbsp;Done</div>
+    </div>
+
+    <!-- Game Cards -->
+    <div class="games-grid" id="gamesGrid"></div>
+
+    <!-- Start Button -->
+    <div class="start-wrap">
+        <button id="startBtn" onclick="startChallenge()">🚀 Start Challenge!</button>
+        <p class="start-hint" id="startHint">5 games will be randomly picked for you</p>
+    </div>
+
+</div>
+
+<!-- Score Modal -->
+<div class="modal-overlay" id="scoreModal">
+    <div class="modal-box">
+        <span class="modal-emoji" id="modalEmoji">🎉</span>
+        <h2 class="modal-title" id="modalTitle">Great Job!</h2>
+        <p class="modal-game-name" id="modalGameName"></p>
+        <div id="modalContent"></div>
+        <button class="modal-next-btn" id="modalNextBtn">Next ➜</button>
+    </div>
+</div>
+
+<!-- Final Modal -->
+<div class="modal-overlay" id="finalModal">
+    <div class="final-box">
+        <span class="final-trophy">🏆</span>
+        <h2 class="final-title">Challenge Complete!</h2>
+        <p class="final-player" id="finalPlayer">Well done, Champion!</p>
+        <div class="final-results-grid" id="finalGrid"></div>
+        <div class="final-totals">
+            <div class="ft-stat"><div class="ft-val" id="finalStars">0</div><div class="ft-lbl">⭐ Stars</div></div>
+            <div class="ft-stat"><div class="ft-val" id="finalPoints">0</div><div class="ft-lbl">🎯 Points</div></div>
+            <div class="ft-stat"><div class="ft-val" id="finalPct">0%</div><div class="ft-lbl">🔥 Score</div></div>
+        </div>
+        <div class="final-rank" id="finalRank">🥇 Superstar!</div>
+        <div class="final-btns">
+            <button class="final-btn primary"    onclick="playAgain()">🔄 Play Again</button>
+            <button class="final-btn secondary"  onclick="window.location.href='../game.html'">🎮 Game Zone</button>
+            <button class="final-btn secondary"  onclick="window.location.href='../track.html'">📊 My Track</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ──────────────────────────────────────────
+   ALL 10 GAMES
+────────────────────────────────────────── */
+const ALL_GAMES = [
+    { id:'chess',   name:'Chess Grandmaster', emoji:'♟️',  diff:'hard',   img:'../images/chess game.png',      path:'../chessgame/chess.html',              maxPts:100 },
+    { id:'magic',   name:'Magic Words',       emoji:'🔤',  diff:'medium', img:'../images/magic words.png',     path:'../magicwords/magicwords.html',         maxPts:80  },
+    { id:'maze',    name:'Maze Game',         emoji:'🌀',  diff:'medium', img:'../images/mazegame.jpg',        path:'../maze/maze.html',                    maxPts:80  },
+    { id:'odd',     name:'Odd One Out',       emoji:'🍎',  diff:'easy',   img:'../images/odd one out.jpg',     path:'../oddone/oddone.html',                maxPts:60  },
+    { id:'connect', name:'Connection Game',   emoji:'🔗',  diff:'medium', img:'../images/connection game.jpg', path:'../connection/connection.html',        maxPts:80  },
+    { id:'fish',    name:'Fish Catch',        emoji:'🐠',  diff:'easy',   img:'../images/Fishcatch.jpg',       path:'../Fishcatchgame/Fishcatchgame.html',  maxPts:60  },
+    { id:'memory',  name:'Memory Matching',   emoji:'🧩',  diff:'medium', img:'../images/memorymatching.jpg',  path:'../memorymatching/memorymatching.html',maxPts:80  },
+    { id:'animal',  name:'Animal Sounds',     emoji:'🐄',  diff:'easy',   img:'../images/animal sound.png',    path:'../soundofword/soundofword.html',      maxPts:60  },
+    { id:'jigsaw',  name:'Jigsaw Puzzle',     emoji:'🧸',  diff:'hard',   img:'../images/jigsaw_puzzle.jpg',   path:'../Jigsaw_puzzle/Jigsaw_puzzle.html',  maxPts:100 },
+    { id:'balloon', name:'Balloon Pop',       emoji:'🎈',  diff:'easy',   img:'../images/balloon pop.jpg',     path:'../Balloon pop/Balloon pop.html',      maxPts:60  },
+];
+const CHALLENGE_COUNT = 5;
+
+/* ── State ── */
+let selectedGames   = [];
+let currentIndex    = 0;
+let challengeActive = false;
+let sessionScores   = [];
+let totalStars      = 0;
+let totalPoints     = 0;
+
+/* ══════════════════════
+   INIT — render all 10 cards
+══════════════════════ */
+function init() {
+    const grid = document.getElementById('gamesGrid');
+    grid.innerHTML = '';
+    ALL_GAMES.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.id = `card-${g.id}`;
+        card.innerHTML = `
+            <img class="card-thumb" src="${g.img}" alt="${g.name}" onerror="this.style.background='#ddd'">
+            <div class="card-body">
+                <div class="card-title">${g.emoji} ${g.name}</div>
+                
+                <div class="card-stars">⭐⭐⭐</div>
+            </div>`;
+        grid.appendChild(card);
+    });
+    renderQueue([]);
+}
+
+/* ── Queue Strip ── */
+function renderQueue(games) {
+    const strip = document.getElementById('queueStrip');
+    strip.innerHTML = '';
+    for (let i = 0; i < CHALLENGE_COUNT; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'queue-slot' + (games[i] ? ' filled' : '');
+        slot.id = `slot-${i}`;
+        slot.textContent = games[i] ? games[i].emoji : '?';
+        if (games[i]) slot.title = games[i].name;
+        strip.appendChild(slot);
+    }
+}
+function setSlot(i, state) {
+    const s = document.getElementById(`slot-${i}`);
+    if (!s) return;
+    s.classList.remove('filled','active','done');
+    s.classList.add(state);
+}
+
+/* ── Pick random ── */
+function pickRandom(arr, n) {
+    const copy = [...arr], out = [];
+    while (out.length < n && copy.length) {
+        out.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
+    }
+    return out;
+}
+
+/* ══════════════════════
+   START
+══════════════════════ */
+function startChallenge() {
+    if (challengeActive) return;
+    selectedGames   = pickRandom(ALL_GAMES, CHALLENGE_COUNT);
+    currentIndex    = 0;
+    challengeActive = true;
+    sessionScores   = [];
+    totalStars = totalPoints = 0;
+
+    document.getElementById('scoreboard').classList.add('visible');
+    document.getElementById('gamesTotal').textContent = CHALLENGE_COUNT;
+    updateScoreboard();
+    renderQueue(selectedGames);
+
+    // Highlight selected cards
+    ALL_GAMES.forEach(g => {
+        document.getElementById(`card-${g.id}`).className =
+            'game-card' + (selectedGames.some(s => s.id === g.id) ? ' selected' : '');
+    });
+
+    document.getElementById('startBtn').style.display  = 'none';
+    document.getElementById('startHint').style.display = 'none';
+    document.getElementById('statusText').textContent  = `Challenge started! 🎮 ${CHALLENGE_COUNT} games picked!`;
+
+    setTimeout(() => launchGame(0), 500);
+}
+
+/* ══════════════════════
+   LAUNCH GAME
+══════════════════════ */
+function launchGame(idx) {
+    currentIndex = idx;
+    const game = selectedGames[idx];
+
+    // Update card styles
+    selectedGames.forEach((g, i) => {
+        document.getElementById(`card-${g.id}`).className =
+            'game-card ' + (i < idx ? 'completed' : i === idx ? 'current selected' : 'selected');
+    });
+    setSlot(idx, 'active');
+
+    document.getElementById('statusText').textContent =
+        `🎮 Game ${idx + 1} of ${CHALLENGE_COUNT}: ${game.emoji} ${game.name}`;
+
+    showReadyModal(game, idx);
+}
+
+/* ══════════════════════
+   READY MODAL — "Go Play" prompt
+══════════════════════ */
+function showReadyModal(game, idx) {
+    document.getElementById('modalEmoji').textContent    = game.emoji;
+    document.getElementById('modalTitle').textContent    = `Game ${idx + 1} of ${CHALLENGE_COUNT}`;
+    document.getElementById('modalGameName').textContent = game.name;
+
+    document.getElementById('modalContent').innerHTML = `
+        <div style="background:rgba(0,0,0,0.06);border-radius:16px;padding:16px;margin-bottom:20px;">
+            <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:#555;margin-bottom:6px;">
+                
+            </div>
+            <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#888;">
+                Max: ${game.maxPts} points
+            </div>
+        </div>`;
+
+    const btn = document.getElementById('modalNextBtn');
+    btn.textContent = `🎮 Open ${game.name}`;
+    btn.onclick = () => {
+        window.open(game.path, '_blank');
+        setTimeout(() => showRatingModal(game, idx), 400);
+    };
+
+    document.getElementById('scoreModal').classList.add('open');
+}
+
+/* ══════════════════════
+   RATING MODAL — star picker
+══════════════════════ */
+function showRatingModal(game, idx) {
+    document.getElementById('modalEmoji').textContent    = '⭐';
+    document.getElementById('modalTitle').textContent    = 'Rate Your Game!';
+    document.getElementById('modalGameName').textContent = game.name;
+
+    let chosen = 0;
+
+    document.getElementById('modalContent').innerHTML = `
+        <p class="picker-hint">How many stars did you earn?</p>
+        <div class="star-picker" id="starPicker">
+            <span data-v="1">⭐</span>
+            <span data-v="2">⭐</span>
+            <span data-v="3">⭐</span>
+        </div>`;
+
+    const picker = document.getElementById('starPicker');
+    picker.querySelectorAll('span').forEach(s => {
+        s.addEventListener('click', () => {
+            chosen = parseInt(s.dataset.v);
+            picker.querySelectorAll('span').forEach((el, i) => {
+                el.classList.toggle('active', i < chosen);
+            });
+        });
+    });
+
+    const btn = document.getElementById('modalNextBtn');
+    btn.textContent = '✅ Submit Score';
+    btn.onclick = () => {
+        if (chosen === 0) chosen = 1;
+        const pts = Math.round((chosen / 3) * game.maxPts);
+        recordAndShow(game, chosen, pts, idx);
+    };
+}
+
+/* ══════════════════════
+   RECORD + SHOW RESULT
+══════════════════════ */
+function recordAndShow(game, stars, points, idx) {
+    totalStars  += stars;
+    totalPoints += points;
+    sessionScores.push({ game, stars, points });
+    updateScoreboard();
+    setSlot(idx, 'done');
+    document.getElementById(`card-${game.id}`).className = 'game-card completed';
+
+    // Build result content
+    document.getElementById('modalEmoji').textContent    = stars === 3 ? '🎉' : stars === 2 ? '😊' : '💪';
+    document.getElementById('modalTitle').textContent    = stars === 3 ? 'Perfect!' : stars === 2 ? 'Well Done!' : 'Keep Going!';
+    document.getElementById('modalGameName').textContent = game.name;
+
+    let starsHtml = '';
+    for (let i = 0; i < 3; i++) {
+        starsHtml += `<span class="star${i < stars ? ' lit' : ''}" style="animation-delay:${i*0.15}s">⭐</span>`;
+    }
+
+    document.getElementById('modalContent').innerHTML = `
+        <div class="modal-stars">${starsHtml}</div>
+        <div class="modal-points-row">
+            <div class="modal-stat"><div class="val">${'⭐'.repeat(stars)}</div><div class="lbl">Stars</div></div>
+            <div class="modal-stat"><div class="val">${points}</div><div class="lbl">Points</div></div>
+        </div>
+        <div class="modal-total">🏆 Total so far: ${totalStars} ⭐ · ${totalPoints} pts</div>`;
+
+    const isLast = idx === CHALLENGE_COUNT - 1;
+    const btn = document.getElementById('modalNextBtn');
+    if (isLast) {
+        btn.textContent = '🏆 See Final Results!';
+        btn.onclick     = showFinalResults;
+    } else {
+        const next = selectedGames[idx + 1];
+        btn.textContent = `Next: ${next.emoji} ${next.name} ➜`;
+        btn.onclick     = () => {
+            document.getElementById('scoreModal').classList.remove('open');
+            launchGame(idx + 1);
+        };
+    }
+}
+
+/* ── Scoreboard update ── */
+function updateScoreboard() {
+    document.getElementById('totalStars').textContent  = totalStars;
+    document.getElementById('totalPoints').textContent = totalPoints;
+    document.getElementById('gamesPlayed').textContent = sessionScores.length;
+}
+
+/* ══════════════════════
+   FINAL RESULTS
+══════════════════════ */
+function showFinalResults() {
+    document.getElementById('scoreModal').classList.remove('open');
+
+    const maxPts  = selectedGames.reduce((a, g) => a + g.maxPts, 0);
+    const maxStars = CHALLENGE_COUNT * 3;
+    const pct     = Math.round((totalPoints / maxPts) * 100);
+    const name    = localStorage.getItem('playerName') || 'Champion';
+
+    document.getElementById('finalPlayer').textContent = `Well done, ${name}! 🌟`;
+    document.getElementById('finalStars').textContent  = `${totalStars}/${maxStars}`;
+    document.getElementById('finalPoints').textContent = totalPoints;
+    document.getElementById('finalPct').textContent    = `${pct}%`;
+
+    const grid = document.getElementById('finalGrid');
+    grid.innerHTML = '';
+    sessionScores.forEach(({ game, stars, points }) => {
+        const row = document.createElement('div');
+        row.className = 'final-game-row';
+        row.innerHTML = `
+            <span class="fg-emoji">${game.emoji}</span>
+            <div>
+                <div class="fg-name">${game.name}</div>
+                <div class="fg-score">${'⭐'.repeat(stars)} · ${points} pts</div>
+            </div>`;
+        grid.appendChild(row);
+    });
+
+    document.getElementById('finalRank').textContent =
+        pct >= 90 ? '🥇 Superstar Champion!' :
+        pct >= 70 ? '🥈 Amazing Player!'     :
+        pct >= 50 ? '🥉 Great Effort!'       : '💪 Practice Makes Perfect!';
+
+    // Save history
+    const hist = JSON.parse(localStorage.getItem('challengeHistory') || '[]');
+    hist.unshift({ date: new Date().toLocaleDateString(), stars: totalStars, points: totalPoints, pct });
+    localStorage.setItem('challengeHistory', JSON.stringify(hist.slice(0, 20)));
+
+    document.getElementById('finalModal').classList.add('open');
+    fireConfetti();
+    challengeActive = false;
+}
+
+/* ── Play Again ── */
+function playAgain() {
+    document.getElementById('finalModal').classList.remove('open');
+    document.getElementById('confettiContainer').innerHTML = '';
+    totalStars = totalPoints = 0;
+    sessionScores = []; currentIndex = 0; challengeActive = false;
+
+    document.getElementById('startBtn').style.display  = '';
+    document.getElementById('startHint').style.display = '';
+    document.getElementById('scoreboard').classList.remove('visible');
+    document.getElementById('statusText').textContent  = '5 random games will be chosen — beat them all!';
+    ALL_GAMES.forEach(g => { document.getElementById(`card-${g.id}`).className = 'game-card'; });
+    renderQueue([]);
+    updateScoreboard();
+}
+
+/* ── Confetti ── */
+function fireConfetti() {
+    const colors = ['#ff6f61','#ffeb3b','#3498db','#2ecc71','#9b59b6','#f39c12','#a29bfe','#fd79a8'];
+    const c = document.getElementById('confettiContainer');
+    c.innerHTML = '';
+    for (let i = 0; i < 130; i++) {
+        const el = document.createElement('div');
+        el.className = 'conf';
+        el.style.cssText = `
+            left:${Math.random()*100}%;
+            background:${colors[~~(Math.random()*colors.length)]};
+            width:${6+Math.random()*8}px; height:${6+Math.random()*8}px;
+            border-radius:${Math.random()>.5?'50%':'2px'};
+            --drift:${(Math.random()-.5)*200}px;
+            animation-duration:${2+Math.random()*3}s;
+            animation-delay:${Math.random()*1.5}s;`;
+        c.appendChild(el);
+    }
+}
+
+init();
+</script>
+</body>
+</html>

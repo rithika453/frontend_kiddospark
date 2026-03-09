@@ -1,30 +1,386 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Kiddospark+ | Track</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiddospark+ | My Game Records</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --coral:  #ff6f61;
+    --yellow: #FFD93D;
+    --green:  #6BCB77;
+    --blue:   #4D96FF;
+    --white:  #ffffff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #FF9A9E 0%, #FAD0C4 50%, #ffecd2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 40px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before, body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.45;
+    z-index: 0;
+    pointer-events: none;
+}
+body::before {
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, #ffb3c6, transparent 70%);
+    top: -120px; left: -120px;
+    animation: blob1 10s ease-in-out infinite;
+}
+body::after {
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, #a0c4ff, transparent 70%);
+    bottom: -80px; right: -80px;
+    animation: blob2 12s ease-in-out infinite;
+}
+@keyframes blob1 { 0%,100%{transform:scale(1)}50%{transform:scale(1.12) translateY(15px)} }
+@keyframes blob2 { 0%,100%{transform:scale(1)}50%{transform:scale(1.08) translateY(-15px)} }
+
+/* ── TOP NAV ── */
+.top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    padding: 20px 20px 0;
+    position: relative; z-index: 20;
+}
+.nav-btn {
+    background: var(--coral);
+    color: var(--white);
+    border: none;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #c9574c;
+    transition: transform .15s, background .2s, box-shadow .15s;
+}
+.nav-btn:hover  { background: var(--yellow); color: #333; transform: translateY(-3px); box-shadow: 0 8px 0 #c9a800; }
+.nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #c9574c; }
+
+/* ── PAGE TITLE ── */
+.page-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #FF1493;
+    text-shadow: 3px 3px 0 rgba(255,255,255,0.6);
+    margin: 24px 0 6px;
+    text-align: center;
+    position: relative; z-index: 1;
+    animation: titleDrop .6s cubic-bezier(.175,.885,.32,1.275) both;
+}
+@keyframes titleDrop {
+    from { opacity: 0; transform: translateY(-24px) scale(.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── MAIN CARD ── */
+.container {
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(10px);
+    padding: 28px 28px 32px;
+    border-radius: 32px;
+    border: 5px solid var(--yellow);
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.15), 0 0 0 8px rgba(255,215,0,0.15);
+    position: relative; z-index: 1;
+    animation: fadeUp .5s .15s both;
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── USER BADGE ── */
+.user-badge {
+    background: linear-gradient(135deg, var(--coral), #ff8b7a);
+    color: white;
+    padding: 11px 28px;
+    border-radius: 40px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 22px;
+    box-shadow: 0 5px 18px rgba(255,111,97,0.35);
+}
+
+/* ── SUMMARY PILLS ── */
+.summary-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+.summary-pill {
+    background: linear-gradient(135deg, #f8f8f8, #f0f0f0);
+    border-radius: 30px;
+    padding: 10px 22px;
+    font-family: 'Fredoka One', cursive;
+    font-size: .95rem;
+    color: #555;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    display: flex; align-items: center; gap: 6px;
+    border: 2px solid rgba(0,0,0,0.04);
+}
+.summary-pill .pill-val { color: var(--coral); font-size: 1.1rem; }
+
+/* ── TABLE ── */
+.score-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.score-table thead tr {
+    background: linear-gradient(135deg, var(--blue), #3a7bd5);
+}
+.score-table thead th {
+    color: white;
+    padding: 14px 16px;
+    font-family: 'Fredoka One', cursive;
+    font-size: .95rem;
+    letter-spacing: .3px;
+    text-align: center;
+}
+.score-table thead th:first-child { border-radius: 14px 0 0 14px; text-align: left; }
+.score-table thead th:last-child  { border-radius: 0 14px 14px 0; }
+
+.score-table tbody tr {
+    border-bottom: 2px solid #f0f0f0;
+    transition: background .2s;
+    animation: rowIn .4s both;
+}
+.score-table tbody tr:hover { background: #fffbf0; }
+.score-table tbody tr:last-child { border-bottom: none; }
+
+@keyframes rowIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+.score-table tbody tr:nth-child(1)  { animation-delay: .05s; }
+.score-table tbody tr:nth-child(2)  { animation-delay: .10s; }
+.score-table tbody tr:nth-child(3)  { animation-delay: .15s; }
+.score-table tbody tr:nth-child(4)  { animation-delay: .20s; }
+.score-table tbody tr:nth-child(5)  { animation-delay: .25s; }
+.score-table tbody tr:nth-child(6)  { animation-delay: .30s; }
+.score-table tbody tr:nth-child(7)  { animation-delay: .35s; }
+.score-table tbody tr:nth-child(8)  { animation-delay: .40s; }
+.score-table tbody tr:nth-child(9)  { animation-delay: .45s; }
+.score-table tbody tr:nth-child(10) { animation-delay: .50s; }
+
+.score-table td {
+    padding: 13px 16px;
+    font-size: .95rem;
+    color: #444;
+    font-weight: 700;
+    text-align: center;
+}
+.score-table td:first-child { text-align: left; }
+
+/* Best score */
+.best-score {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--coral);
+}
+.best-score.zero { color: #ccc; }
+
+/* Recent score */
+.recent-score {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    color: var(--blue);
+}
+.recent-score.zero { color: #ccc; }
+
+/* Played status badge */
+.badge-played {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #e8f5e9;
+    border: 2px solid #a5d6a7;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-family: 'Fredoka One', cursive;
+    font-size: .82rem;
+    color: #2e7d32;
+}
+.badge-notplayed {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #fafafa;
+    border: 2px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-family: 'Fredoka One', cursive;
+    font-size: .82rem;
+    color: #bbb;
+}
+
+/* ── BACK BUTTON ── */
+.back-btn {
+    display: inline-block;
+    margin-top: 28px;
+    padding: 14px 40px;
+    background: linear-gradient(135deg, var(--green), #4caf50);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    box-shadow: 0 6px 0 #388e3c, 0 10px 24px rgba(76,175,80,0.3);
+    transition: transform .15s, box-shadow .15s;
+}
+.back-btn:hover  { transform: translateY(-3px); box-shadow: 0 9px 0 #388e3c; }
+.back-btn:active { transform: translateY(2px);  box-shadow: 0 3px 0 #388e3c; }
+
+.empty-hint {
+    font-size: .88rem;
+    color: #bbb;
+    font-weight: 700;
+    margin-top: 10px;
+    text-align: center;
+}
+</style>
 </head>
-<body class="track-page">
 
-    <!-- Track page background -->
-    <div class="page-bg">
-        <img src="images/background2.png" alt="Background">
-    </div>
+<body>
 
-    <button class="back-arrow" onclick="goHome()">⬅</button>
+<div class="top-bar">
+    <button class="nav-btn" onclick="window.location.href='game.html'">🎮 Games</button>
+    <button class="nav-btn" onclick="window.location.href='login.html'">🚪 Logout</button>
+    <button class="nav-btn" onclick="window.location.href='challenge/challenge.html'">🏆 Challenge</button>
+</div>
 
-    <div class="overlay">
-        <div class="top-bar">
-            <button class="nav-btn" onclick="goTrack()">Track</button>
-            <button class="nav-btn" onclick="goBack()">Logout</button>
-            <button class="nav-btn" onclick="goChallenge()">Challenge</button>
-        </div>
+<h1 class="page-title">🏆 My Game Records</h1>
 
-        <h1 class="title">Track Page</h1>
-        <p class="track-text">Choose your track and start playing</p>
-    </div>
+<div class="container">
 
-    <script src="script.js"></script>
+    <div class="user-badge" id="currentUserBadge">⭐ Loading...</div>
+
+    <div class="summary-row" id="summaryRow"></div>
+
+    <div id="scoreBoard"></div>
+
+    <a href="game.html" class="back-btn">🚀 Back to Game Zone</a>
+
+</div>
+
+<script>
+const ALL_GAMES = [
+    { key: 'chessgame',      name: '♟️ Chess Grandmaster' },
+    { key: 'magicwords',     name: '🔤 Magic Words'        },
+    { key: 'maze',           name: '🌀 Maze Game'           },
+    { key: 'oddone',         name: '🍎 Odd One Out'         },
+    { key: 'connection',     name: '🔗 Connection Game'     },
+    { key: 'fishcatchgame',  name: '🐠 Fish Catch'          },
+    { key: 'memorymatching', name: '🧠 Memory Matching'     },
+    { key: 'soundofword',    name: '🐄 Animal Sounds'       },
+    { key: 'jigsaw',         name: '🧩 Jigsaw Puzzle'       },
+    { key: 'balloon',        name: '🎈 Balloon Pop'         },
+];
+
+function displayTrackRecord() {
+    const username = localStorage.getItem('playerName') ||
+                     localStorage.getItem('kp_username') || 'Guest Player';
+
+    document.getElementById('currentUserBadge').innerHTML =
+        '⭐ Explorer: <strong>' + username + '</strong>';
+
+    let totalBest   = 0;
+    let gamesPlayed = 0;
+    let topGame     = { name: '—', score: 0 };
+
+    let rows = '';
+
+    ALL_GAMES.forEach(game => {
+        // Check both the standard key AND any alternate casing games might use
+        const altKey = game.key.charAt(0).toUpperCase() + game.key.slice(1);
+        const bestScore   = parseInt(
+            localStorage.getItem(game.key + '_score')  ||
+            localStorage.getItem(altKey  + '_score')   || '0');
+        const recentScore = parseInt(
+            localStorage.getItem(game.key + '_recent') ||
+            localStorage.getItem(altKey  + '_recent')  || '0');
+        const lastDate =
+            localStorage.getItem(game.key + '_date') ||
+            localStorage.getItem(altKey  + '_date')  || null;
+        const played      = !!lastDate;
+
+        if (played) gamesPlayed++;
+        totalBest += bestScore;
+        if (bestScore > topGame.score) topGame = { name: game.name, score: bestScore };
+
+        const bestCell = bestScore > 0
+            ? `<span class="best-score">🏅 ${bestScore}</span>`
+            : `<span class="best-score zero">— 0</span>`;
+
+        const recentCell = recentScore > 0
+            ? `<span class="recent-score">🕹️ ${recentScore}</span>`
+            : `<span class="recent-score zero">— 0</span>`;
+
+        const statusBadge = played
+            ? `<span class="badge-played">✅ Played · ${lastDate}</span>`
+            : `<span class="badge-notplayed">❌ Not played yet</span>`;
+
+        rows += `
+        <tr>
+            <td>${game.name}</td>
+            <td>${bestCell}</td>
+            <td>${recentCell}</td>
+            <td>${statusBadge}</td>
+        </tr>`;
+    });
+
+    /* Summary pills */
+    document.getElementById('summaryRow').innerHTML = `
+        <div class="summary-pill">🎮 Played <span class="pill-val">${gamesPlayed} / ${ALL_GAMES.length}</span></div>
+        <div class="summary-pill">🔥 Total Best <span class="pill-val">${totalBest}</span></div>
+        <div class="summary-pill">🥇 Top Game <span class="pill-val">${topGame.name.replace(/^\S+\s/,'')}</span></div>`;
+
+    /* Table */
+    document.getElementById('scoreBoard').innerHTML = `
+        <table class="score-table">
+            <thead>
+                <tr>
+                    <th>Game Name</th>
+                    <th>Best Score</th>
+                    <th>Recent Score</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+        ${gamesPlayed === 0 ? '<p class="empty-hint">👆 Play some games to see your scores here!</p>' : ''}`;
+}
+
+window.onload = displayTrackRecord;
+</script>
+
 </body>
 </html>

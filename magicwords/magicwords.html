@@ -1,45 +1,78 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magic Words - Speak & Color</title>
-    <link rel="stylesheet" href="magic.css">
+    <title>Speak & Color Game</title>
+    <link rel="stylesheet" href="magicwords.css">
 </head>
+
 <body>
 
-<div class="game-box">
-    <button class="hub-btn" onclick="window.location.href='../game.html'">🏠 Hub</button>
+    <div class="game-container">
+    
+        <h1>🎤 Speak & Color</h1>
+    
+        <h2 id="wordDisplay"></h2>
+    
+        <p id="status">Click Speak and say the word</p>
+    
+        <button onclick="startListening()">🎙 Speak</button>
+    
+        <br><br>
+    
+        <!-- image layer sits below the coloring layer -->
+        <div class="canvas-container">
+            <canvas id="imageCanvas" width="300" height="300"
+                    class="layer"></canvas>
+            <canvas id="colorCanvas" width="300" height="300"
+                    class="layer"></canvas>
+        </div>
+    
+        <br><br>
+    
+        <div>
 
-    <h1>🎤 Speak & Color</h1>
+            <!-- Basic Colors -->
+            <button class="color-btn" onclick="setColor('red')" style="background:red;"></button>
+            <button class="color-btn" onclick="setColor('blue')" style="background:blue;"></button>
+            <button class="color-btn" onclick="setColor('green')" style="background:green;"></button>
+            <button class="color-btn" onclick="setColor('yellow')" style="background:yellow;"></button>
+            <button class="color-btn" onclick="setColor('black')" style="background:black;"></button>
 
-    <div class="word-card">
-        <h2 id="wordDisplay">APPLE</h2>
+            <br><br>
+
+            <!-- Extra Colors -->
+            <button class="color-btn" onclick="setColor('orange')" style="background:orange;"></button>
+            <button class="color-btn" onclick="setColor('purple')" style="background:purple;"></button>
+            <button class="color-btn" onclick="setColor('pink')" style="background:pink;"></button>
+            <button class="color-btn" onclick="setColor('brown')" style="background:brown;"></button>
+            <button class="color-btn" onclick="setColor('gray')" style="background:gray;"></button>
+
+            <br><br>
+
+            <!-- Fun Colors -->
+            <button class="color-btn" onclick="setColor('cyan')" style="background:cyan;"></button>
+            <button class="color-btn" onclick="setColor('magenta')" style="background:magenta;"></button>
+            <button class="color-btn" onclick="setColor('lime')" style="background:lime;"></button>
+            <button class="color-btn" onclick="setColor('gold')" style="background:gold;"></button>
+            <button class="color-btn" onclick="setColor('violet')" style="background:violet;"></button>
+
+            <br><br>
+            <!-- Eraser -->
+            <button class="color-btn" onclick="setColor('eraser')" style="background:#fff;border:1px solid #000;">
+                🧽
+            </button>
+
+        </div>
+    
+        <br><br>
+    
+        <button onclick="nextLevel()">➡ Next Level</button>
+    
     </div>
+    
+    <script src="magicwords.js"></script>
+    <script src="../script.js"></script>
 
-    <p id="status">Click Speak and say the word</p>
-
-    <button class="speak-btn" onclick="startListening()">🎙️ Speak</button>
-
-    <br><br>
-
-    <canvas id="colorCanvas" width="280" height="200"></canvas>
-
-    <br><br>
-
-    <div class="color-palette">
-        <button onclick="setColor('red')" style="background:red;"></button>
-        <button onclick="setColor('blue')" style="background:blue;"></button>
-        <button onclick="setColor('green')" style="background:green;"></button>
-        <button onclick="setColor('yellow')" style="background:yellow;"></button>
-        <button onclick="setColor('black')" style="background:black;"></button>
-    </div>
-
-    <br>
-
-    <button class="next-btn" onclick="nextLevel()">Next Level ➔</button>
-</div>
-
-<script src="magic.js"></script>
 </body>
 </html>

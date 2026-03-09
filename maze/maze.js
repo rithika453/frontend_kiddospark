@@ -1,6 +1,6 @@
 let currentLevel = 1;
 let moves = 0;
-let gridSize = 11; 
+let gridSize = 11;
 let playerPos = { x: 1, y: 1 };
 let targetPos = { x: gridSize - 2, y: gridSize - 2 };
 let mazeLayout = [];
@@ -13,7 +13,7 @@ const themes = [
 ];
 
 function goToMainHub() {
-    window.location.href = "../game.html"; // Hub navigation
+    window.location.href = "../game.html";
 }
 
 function applyTheme() {
@@ -45,8 +45,6 @@ function generateMaze(size) {
 function drawMaze() {
     const theme = applyTheme();
     const container = document.getElementById('maze-container');
-    
-    // Cell size fixed at 28px to fill gap
     const cellSize = "28px";
     container.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize})`;
     container.innerHTML = '';
@@ -55,14 +53,10 @@ function drawMaze() {
         for (let x = 0; x < gridSize; x++) {
             const cell = document.createElement('div');
             cell.className = 'cell ' + (mazeLayout[y][x] === 1 ? 'wall' : 'path');
-            
-            // Forced size for perfect grid
             cell.style.width = cellSize;
             cell.style.height = cellSize;
-            
             if (x === playerPos.x && y === playerPos.y) cell.innerHTML = theme.char;
             else if (x === targetPos.x && y === targetPos.y) cell.innerHTML = theme.goal;
-            
             container.appendChild(cell);
         }
     }
@@ -70,13 +64,14 @@ function drawMaze() {
 
 function move(dir) {
     let nx = playerPos.x, ny = playerPos.y;
-    if (dir === 'up') ny--;
-    if (dir === 'down') ny++;
-    if (dir === 'left') nx--;
+    if (dir === 'up')    ny--;
+    if (dir === 'down')  ny++;
+    if (dir === 'left')  nx--;
     if (dir === 'right') nx++;
 
     if (mazeLayout[ny] && mazeLayout[ny][nx] === 0) {
-        playerPos.x = nx; playerPos.y = ny;
+        playerPos.x = nx;
+        playerPos.y = ny;
         moves++;
         document.getElementById('moveText').innerText = moves;
         drawMaze();
@@ -87,10 +82,22 @@ function move(dir) {
 }
 
 function nextLevel() {
-    alert("✨ Level Complete!");
+    /* ── Calculate score: fewer moves = higher score ── */
+    const maxMoves  = gridSize * gridSize;
+    const score     = Math.max(10, maxMoves - moves) * currentLevel;
+
+    /* ── Save to localStorage via updateScore ── */
+    if (typeof updateScore === 'function') {
+        updateScore('maze', score);
+    }
+
+    /* ── Show modal if available (from maze.html), else continue ── */
+    if (typeof window._origNextLevel === 'function') {
+        // maze.html patches this — do nothing here, HTML handles modal
+    }
+
     currentLevel++;
-    // gridSize limit to avoid scrolling
-    if (currentLevel % 5 === 0 && gridSize < 15) gridSize += 2; 
+    if (currentLevel % 5 === 0 && gridSize < 15) gridSize += 2;
     resetGame();
 }
 
@@ -99,15 +106,15 @@ function resetGame() {
     playerPos = { x: 1, y: 1 };
     targetPos = { x: gridSize - 2, y: gridSize - 2 };
     document.getElementById('levelText').innerText = currentLevel;
-    document.getElementById('moveText').innerText = moves;
+    document.getElementById('moveText').innerText  = moves;
     mazeLayout = generateMaze(gridSize);
     drawMaze();
 }
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === "ArrowUp") move('up');
-    if (e.key === "ArrowDown") move('down');
-    if (e.key === "ArrowLeft") move('left');
+    if (e.key === "ArrowUp")    move('up');
+    if (e.key === "ArrowDown")  move('down');
+    if (e.key === "ArrowLeft")  move('left');
     if (e.key === "ArrowRight") move('right');
 });
 
