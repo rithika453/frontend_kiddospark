@@ -30,11 +30,13 @@
             <div class="controls">
                 <button class="btn-restart" onclick="location.reload()">Reset Setup 🔄</button>
                 <button class="btn-hint" onclick="useHint()">💡 Hint (<span id="hintCount">3</span>)</button>
+                <button class="btn-back" onclick="window.location.href='../game.html'">⬅ Back</button>
             </div>
         </div>
     </div>
 
-    <script src="chess.js"></script>
+    <!-- script.js FIRST so updateScore is defined before chess.js runs -->
     <script src="../script.js"></script>
+    <script src="chess.js"></script>
 </body>
 </html>

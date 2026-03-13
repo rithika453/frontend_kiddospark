@@ -16,6 +16,7 @@ let board = [
 
 let turn = 'w', selected = null, highlights = new Set(), hintsLeft = 3, gameOver = false;
 let mode = 'bot', side = 'white', flipped = false;
+let winsCount = 0; // track wins in session
 
 function setMode(m) {
     mode = m;
@@ -68,10 +69,21 @@ function handleMove(idx) {
     if (selected !== null && highlights.has(idx)) {
         if (board[idx].toUpperCase() === 'K') {
             const winner = turn === 'w' ? "White" : "Black";
+
+            // ── Determine if the human player won ──
+            const playerWon = (mode === 'p2p') ||
+                              (side === 'white' && turn === 'w') ||
+                              (side === 'black' && turn === 'b');
+
             board[idx] = board[selected];
             board[selected] = '';
             gameOver = true;
             render();
+
+            // ── Save score: win = 100, loss = 10 ──
+            const score = playerWon ? 100 : 10;
+            if (typeof updateScore === 'function') updateScore('chessgame', score);
+
             setTimeout(() => alert(`🎉 Game Over! ${winner} wins!`), 100);
             return;
         }
@@ -149,6 +161,10 @@ function botPlay() {
         if (board[move.t].toUpperCase() === 'K') {
             board[move.t] = board[move.f]; board[move.f] = '';
             gameOver = true; render();
+
+            // ── Bot wins → player score = 10 (participated) ──
+            if (typeof updateScore === 'function') updateScore('chessgame', 10);
+
             setTimeout(() => alert("🚩 Bot Wins! Better luck next time."), 100);
             return;
         }
@@ -178,8 +194,3 @@ function useHint() {
         render();
     }
 }
-if (typeof updateScore === 'function') updateScore('chessgame', score);
-// if you wish to record a score, call
-//    if (typeof updateScore === 'function') updateScore('chessgame', YOUR_SCORE);
-// at the appropriate game-over point. The global updateScore is loaded
-// via ../script.js in the HTML.

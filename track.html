@@ -318,18 +318,24 @@ function displayTrackRecord() {
 
     let rows = '';
 
+    // Get current logged-in user (same logic as updateScore)
+    const currentUser = (localStorage.getItem('playerName') ||
+                         localStorage.getItem('kp_username') || 'guest').toLowerCase().trim();
+
     ALL_GAMES.forEach(game => {
-        // Check both the standard key AND any alternate casing games might use
-        const altKey = game.key.charAt(0).toUpperCase() + game.key.slice(1);
+        // Read scores using per-user prefix: username_gamekey_score
+        const prefix    = currentUser + '_' + game.key;
+        const altKey    = currentUser + '_' + game.key.charAt(0).toUpperCase() + game.key.slice(1);
+
         const bestScore   = parseInt(
-            localStorage.getItem(game.key + '_score')  ||
-            localStorage.getItem(altKey  + '_score')   || '0');
+            localStorage.getItem(prefix + '_score') ||
+            localStorage.getItem(altKey + '_score') || '0');
         const recentScore = parseInt(
-            localStorage.getItem(game.key + '_recent') ||
-            localStorage.getItem(altKey  + '_recent')  || '0');
+            localStorage.getItem(prefix + '_recent') ||
+            localStorage.getItem(altKey + '_recent') || '0');
         const lastDate =
-            localStorage.getItem(game.key + '_date') ||
-            localStorage.getItem(altKey  + '_date')  || null;
+            localStorage.getItem(prefix + '_date') ||
+            localStorage.getItem(altKey + '_date') || null;
         const played      = !!lastDate;
 
         if (played) gamesPlayed++;

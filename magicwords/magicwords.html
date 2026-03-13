@@ -1,78 +1,71 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Speak & Color Game</title>
     <link rel="stylesheet" href="magicwords.css">
 </head>
-
 <body>
-
     <div class="game-container">
-    
-        <h1>🎤 Speak & Color</h1>
-    
-        <h2 id="wordDisplay"></h2>
-    
-        <p id="status">Click Speak and say the word</p>
-    
-        <button onclick="startListening()">🎙 Speak</button>
-    
-        <br><br>
-    
-        <!-- image layer sits below the coloring layer -->
-        <div class="canvas-container">
-            <canvas id="imageCanvas" width="300" height="300"
-                    class="layer"></canvas>
-            <canvas id="colorCanvas" width="300" height="300"
-                    class="layer"></canvas>
-        </div>
-    
-        <br><br>
-    
-        <div>
 
-            <!-- Basic Colors -->
-            <button class="color-btn" onclick="setColor('red')" style="background:red;"></button>
-            <button class="color-btn" onclick="setColor('blue')" style="background:blue;"></button>
-            <button class="color-btn" onclick="setColor('green')" style="background:green;"></button>
-            <button class="color-btn" onclick="setColor('yellow')" style="background:yellow;"></button>
-            <button class="color-btn" onclick="setColor('black')" style="background:black;"></button>
-
-            <br><br>
-
-            <!-- Extra Colors -->
-            <button class="color-btn" onclick="setColor('orange')" style="background:orange;"></button>
-            <button class="color-btn" onclick="setColor('purple')" style="background:purple;"></button>
-            <button class="color-btn" onclick="setColor('pink')" style="background:pink;"></button>
-            <button class="color-btn" onclick="setColor('brown')" style="background:brown;"></button>
-            <button class="color-btn" onclick="setColor('gray')" style="background:gray;"></button>
-
-            <br><br>
-
-            <!-- Fun Colors -->
-            <button class="color-btn" onclick="setColor('cyan')" style="background:cyan;"></button>
-            <button class="color-btn" onclick="setColor('magenta')" style="background:magenta;"></button>
-            <button class="color-btn" onclick="setColor('lime')" style="background:lime;"></button>
-            <button class="color-btn" onclick="setColor('gold')" style="background:gold;"></button>
-            <button class="color-btn" onclick="setColor('violet')" style="background:violet;"></button>
-
-            <br><br>
-            <!-- Eraser -->
-            <button class="color-btn" onclick="setColor('eraser')" style="background:#fff;border:1px solid #000;">
-                🧽
+        <!-- Nav -->
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+            <button onclick="window.location.href='../game.html'"
+                style="background:#ff6f61;color:white;border-radius:50px;padding:8px 18px;">
+                ⬅ Back
             </button>
-
+            <span id="scoreDisplay"
+                style="font-family:'Comic Sans MS',cursive;font-weight:bold;
+                       font-size:1.1rem;color:#ff6f61;align-self:center;">
+                ⭐ Score: 0
+            </span>
         </div>
-    
-        <br><br>
-    
-        <button onclick="nextLevel()">➡ Next Level</button>
-    
-    </div>
-    
-    <script src="magicwords.js"></script>
-    <script src="../script.js"></script>
 
+        <h1>🎤 Speak & Color</h1>
+        <h2 id="wordDisplay"></h2>
+        <p id="status">Click Speak and say the word</p>
+
+        <button onclick="startListening()">🎙 Speak</button>
+
+        <br><br>
+
+        <div class="canvas-container">
+            <canvas id="imageCanvas" width="300" height="300" class="layer"></canvas>
+            <canvas id="colorCanvas" width="300" height="300" class="layer"></canvas>
+        </div>
+
+        <br><br>
+
+        <div>
+            <button class="color-btn" onclick="setColor('red')"     style="background:red;"></button>
+            <button class="color-btn" onclick="setColor('blue')"    style="background:blue;"></button>
+            <button class="color-btn" onclick="setColor('green')"   style="background:green;"></button>
+            <button class="color-btn" onclick="setColor('yellow')"  style="background:yellow;"></button>
+            <button class="color-btn" onclick="setColor('black')"   style="background:black;"></button>
+            <br><br>
+            <button class="color-btn" onclick="setColor('orange')"  style="background:orange;"></button>
+            <button class="color-btn" onclick="setColor('purple')"  style="background:purple;"></button>
+            <button class="color-btn" onclick="setColor('pink')"    style="background:pink;"></button>
+            <button class="color-btn" onclick="setColor('brown')"   style="background:brown;"></button>
+            <button class="color-btn" onclick="setColor('gray')"    style="background:gray;"></button>
+            <br><br>
+            <button class="color-btn" onclick="setColor('cyan')"    style="background:cyan;"></button>
+            <button class="color-btn" onclick="setColor('magenta')" style="background:magenta;"></button>
+            <button class="color-btn" onclick="setColor('lime')"    style="background:lime;"></button>
+            <button class="color-btn" onclick="setColor('gold')"    style="background:gold;"></button>
+            <button class="color-btn" onclick="setColor('violet')"  style="background:violet;"></button>
+            <br><br>
+            <button class="color-btn" onclick="setColor('eraser')"
+                style="background:#fff;border:2px solid #333;">🧽</button>
+        </div>
+
+        <br><br>
+
+        <button onclick="nextLevel()">➡ Next Level</button>
+
+    </div>
+
+    <!-- script.js FIRST so updateScore is defined before magicwords.js runs -->
+    <script src="../script.js"></script>
+    <script src="magicwords.js"></script>
 </body>
 </html>

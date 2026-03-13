@@ -11,16 +11,24 @@
     <div id="level-page" class="container">
         <h1 class="title">🌟 Pick a Level 🌟</h1>
         <div class="level-grid" id="level-menu"></div>
+        <div style="margin-top:20px;">
+            <button onclick="window.location.href='../game.html'"
+                style="padding:10px 24px;background:#ff6f61;color:white;border:none;
+                       border-radius:50px;font-weight:bold;cursor:pointer;font-size:1rem;">
+                ⬅ Back to Games
+            </button>
+        </div>
     </div>
 
     <div id="game-page" class="container hidden">
         <div class="header">
             <button class="menu-btn" onclick="showLevels()">🏠 Menu</button>
             <div id="level-title">Level 1</div>
+            <button class="menu-btn" onclick="window.location.href='../game.html'"
+                style="background:#6BCB77;">⬅ Back</button>
         </div>
 
-        <div class="image-box" id="question-box">
-            </div>
+        <div class="image-box" id="question-box"></div>
 
         <p class="instruction">What do these make?</p>
         <div id="options-container" class="options-grid"></div>
@@ -28,12 +36,14 @@
 
     <div id="message-modal" class="modal hidden">
         <div class="modal-content">
-            <h2 id="modal-title">🌟Great !🌟</h2>
+            <h2 id="modal-title">🌟 Great! 🌟</h2>
             <p id="modal-text">Correct Answer!</p>
             <button id="modal-btn" class="next-btn">Next Level</button>
         </div>
     </div>
 
+    <!-- script.js FIRST so updateScore is defined before connection.js runs -->
+    <script src="../script.js"></script>
     <script src="connection.js"></script>
 </body>
-</html>  
+</html>

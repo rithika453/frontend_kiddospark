@@ -10,15 +10,42 @@
 
   <div id="level-page" class="game-container">
     <h1>🦁 Choose a Level 🦁</h1>
+
+    <!-- Nav buttons -->
+    <div style="display:flex;justify-content:center;gap:12px;margin-bottom:16px;">
+      <button onclick="window.location.href='../game.html'"
+        style="padding:10px 24px;background:#ff6f61;color:white;border:none;
+               border-radius:50px;font-weight:bold;font-size:1rem;cursor:pointer;
+               box-shadow:0 5px 0 #c9574c;">
+        ⬅ Back
+      </button>
+      <button onclick="window.location.href='../login.html'"
+        style="padding:10px 24px;background:#6c5ce7;color:white;border:none;
+               border-radius:50px;font-weight:bold;font-size:1rem;cursor:pointer;
+               box-shadow:0 5px 0 #4a3aab;">
+        🚪 Logout
+      </button>
+    </div>
+
     <div id="level-menu" class="level-grid"></div>
   </div>
 
   <div id="game-page" class="game-container hidden">
-    <h2 id="level-title">Level 1</h2>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <button onclick="initMenu()"
+        style="padding:8px 18px;background:#ff6f61;color:white;border:none;
+               border-radius:50px;font-weight:bold;cursor:pointer;">
+        🏠 Menu
+      </button>
+      <h2 id="level-title" style="margin:0;">Level 1</h2>
+      <div style="width:80px;"></div>
+    </div>
+
     <div class="question-section">
       <button id="speakerBtn" onclick="playCurrentAudio()">🔊</button>
       <p id="hint-text"></p>
     </div>
+
     <div id="options-container" class="options-grid"></div>
   </div>
 
@@ -31,20 +58,23 @@
   </div>
 
   <div id="audio-container" style="display:none;">
-    <audio id="cowSound" src="audio/cow.mp3"></audio>
-    <audio id="dogSound" src="audio/dog.mp3"></audio>
-    <audio id="catSound" src="audio/cat.mp3"></audio>
-    <audio id="sheepSound" src="audio/sheep.mp3"></audio>
-    <audio id="goatSound" src="audio/goat.mp3"></audio>
-    <audio id="rabbitSound" src="audio/rabbit.mp3"></audio>
+    <audio id="cowSound"      src="audio/cow.mp3"></audio>
+    <audio id="dogSound"      src="audio/dog.mp3"></audio>
+    <audio id="catSound"      src="audio/cat.mp3"></audio>
+    <audio id="sheepSound"    src="audio/sheep.mp3"></audio>
+    <audio id="goatSound"     src="audio/goat.mp3"></audio>
+    <audio id="rabbitSound"   src="audio/rabbit.mp3"></audio>
     <audio id="elephantSound" src="audio/elephant.mp3"></audio>
-    <audio id="pigSound" src="audio/pig.mp3"></audio>
-    <audio id="horseSound" src="audio/horse.mp3"></audio>
-    <audio id="donkeySound" src="audio/donkey.mp3"></audio>
-    <audio id="lionSound" src="audio/lion.mp3"></audio>
-    <audio id="tigerSound" src="audio/tiger.mp3"></audio>
+    <audio id="pigSound"      src="audio/pig.mp3"></audio>
+    <audio id="horseSound"    src="audio/horse.mp3"></audio>
+    <audio id="donkeySound"   src="audio/donkey.mp3"></audio>
+    <audio id="lionSound"     src="audio/lion.mp3"></audio>
+    <audio id="tigerSound"    src="audio/tiger.mp3"></audio>
   </div>
 
+  <!-- script.js FIRST so updateScore is defined before soundofword.js runs -->
+  <script src="../script.js"></script>
   <script src="soundofword.js"></script>
+
 </body>
 </html>

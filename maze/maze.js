@@ -4,17 +4,14 @@ let gridSize = 11;
 let playerPos = { x: 1, y: 1 };
 let targetPos = { x: gridSize - 2, y: gridSize - 2 };
 let mazeLayout = [];
+let totalScore = 0; // ── cumulative score across levels
 
 const themes = [
-    { bg: "#a8e6cf", wall: "#2d5a27", path: "#f1f8e9", char: "🧚", goal: "💎" },
-    { bg: "#ff8b94", wall: "#d63031", path: "#fff5f5", char: "🐱", goal: "🥛" },
-    { bg: "#a29bfe", wall: "#6c5ce7", path: "#f1f0ff", char: "👽", goal: "🛸" },
-    { bg: "#fab1a0", wall: "#e17055", path: "#fff3e0", char: "🐭", goal: "🧀" }
+    { wall: "#2d5a27", path: "#f1f8e9", char: "🧚", goal: "💎" },
+    { wall: "#d63031", path: "#fff5f5", char: "🐱", goal: "🥛" },
+    { wall: "#6c5ce7", path: "#f1f0ff", char: "👽", goal: "🛸" },
+    { wall: "#e17055", path: "#fff3e0", char: "🐭", goal: "🧀" }
 ];
-
-function goToMainHub() {
-    window.location.href = "../game.html";
-}
 
 function applyTheme() {
     const themeIdx = Math.floor((currentLevel - 1) / 5) % themes.length;
@@ -28,11 +25,11 @@ function generateMaze(size) {
     let maze = Array.from({ length: size }, () => Array(size).fill(1));
     function walk(x, y) {
         maze[y][x] = 0;
-        const dirs = [[0, 2], [0, -2], [2, 0], [-2, 0]].sort(() => Math.random() - 0.5);
+        const dirs = [[0,2],[0,-2],[2,0],[-2,0]].sort(() => Math.random() - 0.5);
         for (let [dx, dy] of dirs) {
             let nx = x + dx, ny = y + dy;
-            if (nx > 0 && nx < size - 1 && ny > 0 && ny < size - 1 && maze[ny][nx] === 1) {
-                maze[y + dy / 2][x + dx / 2] = 0;
+            if (nx > 0 && nx < size-1 && ny > 0 && ny < size-1 && maze[ny][nx] === 1) {
+                maze[y + dy/2][x + dx/2] = 0;
                 walk(nx, ny);
             }
         }
@@ -48,7 +45,6 @@ function drawMaze() {
     const cellSize = "28px";
     container.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize})`;
     container.innerHTML = '';
-
     for (let y = 0; y < gridSize; y++) {
         for (let x = 0; x < gridSize; x++) {
             const cell = document.createElement('div');
@@ -81,20 +77,14 @@ function move(dir) {
     }
 }
 
+// nextLevel is fully handled by maze.html's inline patch
+// This base version runs only if maze.html patch is not present
 function nextLevel() {
-    /* ── Calculate score: fewer moves = higher score ── */
-    const maxMoves  = gridSize * gridSize;
-    const score     = Math.max(10, maxMoves - moves) * currentLevel;
+    const maxMoves   = gridSize * gridSize;
+    const levelScore = Math.max(10, maxMoves - moves) * currentLevel;
+    totalScore += levelScore;
 
-    /* ── Save to localStorage via updateScore ── */
-    if (typeof updateScore === 'function') {
-        updateScore('maze', score);
-    }
-
-    /* ── Show modal if available (from maze.html), else continue ── */
-    if (typeof window._origNextLevel === 'function') {
-        // maze.html patches this — do nothing here, HTML handles modal
-    }
+    if (typeof updateScore === 'function') updateScore('maze', totalScore);
 
     currentLevel++;
     if (currentLevel % 5 === 0 && gridSize < 15) gridSize += 2;

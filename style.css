@@ -9,12 +9,8 @@
 body, html {
     width: 100%;
     height: 100%;
-    /* overflow-x hidden panni, vertical scroll allow pannuvom game list-kaaga */
     overflow-x: hidden;
-}
-
-/* ---------- Full Screen Background ---------- */
-.page-bg {
+}.page-bg {
     position: fixed;
     inset: 0;
     z-index: -2;
@@ -26,19 +22,15 @@ body, html {
     object-fit: cover;
 }
 
-/* ---------- LOGIN PAGE WRAPPER ---------- */
-/* Intha wrapper login page-la mattum dhaan irukanum */
 .login-wrapper {
     position: relative;
     z-index: 5;
     width: 100%;
     height: 100vh;
     display: flex;
-    justify-content: center;   /* Horizontal Center */
-    align-items: center;       /* Vertical Center */
+    justify-content: center;  
+    align-items: center;      
 }
-
-/* ---------- Glass Login Box ---------- */
 .login-box {
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(15px);
@@ -94,9 +86,8 @@ body, html {
 
 .footer-text { color: white; margin-top: 10px; font-size: 0.9rem; }
 
-/* ---------- Floating Characters ---------- */
 .background-container {
-    position: fixed; /* absolute-la irundhu fixed-ku mathiyachu for scrolling */
+    position: fixed; 
     inset: 0;
     z-index: 1;
     pointer-events: none;
@@ -114,10 +105,9 @@ body, html {
     50% { transform: translateY(-25px) rotate(5deg); }
 }
 
-/* ---------- OVERLAY (Game & Track Pages) ---------- */
 .overlay {
     width: 100%;
-    min-height: 100vh; /* height-ai min-height-a mathiyachu for scroll */
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -126,7 +116,7 @@ body, html {
     padding-bottom: 40px;
 }
 
-/* ---------- Top Navigation ---------- */
+
 .top-bar {
     width: 100%;
     display: flex;
@@ -149,7 +139,6 @@ body, html {
 
 .nav-btn:hover { background: #ffeb3b; color: #333; }
 
-/* ---------- Titles ---------- */
 .title {
     color: white;
     font-size: 2.5rem;

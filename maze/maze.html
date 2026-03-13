@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiddospark+ | Maze Quest</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-
 <style>
 :root {
     --wall-color: #2d5a27;
@@ -15,9 +14,7 @@
     --green:  #6BCB77;
     --white:  #ffffff;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
     background: url('../images/background2.png') no-repeat center center fixed;
     background-size: cover;
@@ -30,8 +27,6 @@ body {
     overflow-x: hidden;
     padding: 16px;
 }
-
-/* ── TOP NAV ── */
 .top-bar {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -56,16 +51,12 @@ body {
 }
 .nav-btn:hover  { background: var(--yellow); color: #333; transform: translateY(-3px); box-shadow: 0 8px 0 #c9a800; }
 .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #c9574c; }
-
-/* ── GAME BOX ── */
 .game-box {
     background: rgba(255,255,255,0.97);
     padding: 20px 20px 22px;
     border-radius: 30px;
     border: 5px solid #5d4037;
-    box-shadow:
-        0 0 0 8px rgba(255,255,255,0.3),
-        0 20px 50px rgba(0,0,0,0.3);
+    box-shadow: 0 0 0 8px rgba(255,255,255,0.3), 0 20px 50px rgba(0,0,0,0.3);
     text-align: center;
     width: fit-content;
     min-width: 300px;
@@ -78,18 +69,12 @@ body {
     from { opacity: 0; transform: scale(.85) translateY(20px); }
     to   { opacity: 1; transform: scale(1) translateY(0); }
 }
-
-/* ── TITLE ── */
 .title {
     font-family: 'Fredoka One', cursive;
     font-size: 1.6rem;
     color: #3e2723;
     margin: 6px 0 14px;
-    letter-spacing: .5px;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
 }
-
-/* ── STATS BAR ── */
 .stats {
     display: flex;
     justify-content: space-between;
@@ -109,21 +94,13 @@ body {
     align-items: center;
     gap: 5px;
 }
-.stat-item .val {
-    color: var(--coral);
-    font-size: 1.15rem;
-}
-
-/* ── THEME INDICATOR ── */
+.stat-item .val { color: var(--coral); font-size: 1.15rem; }
 .theme-badge {
     font-family: 'Fredoka One', cursive;
     font-size: .8rem;
     color: #888;
     margin-bottom: 8px;
-    letter-spacing: .3px;
 }
-
-/* ── MAZE CONTAINER ── */
 .maze {
     display: grid;
     background: var(--wall-color);
@@ -131,27 +108,17 @@ body {
     border-radius: 10px;
     overflow: hidden;
     width: fit-content;
-    box-shadow:
-        inset 0 0 12px rgba(0,0,0,0.3),
-        0 6px 18px rgba(0,0,0,0.2);
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.3), 0 6px 18px rgba(0,0,0,0.2);
     border: 3px solid #1a3a17;
     transition: background .4s;
 }
-
 .cell {
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    line-height: 1;
-    transition: background .3s;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; line-height: 1;
 }
 .wall { background-color: var(--wall-color); }
 .path { background-color: var(--path-color); }
-
-/* ── D-PAD CONTROLS ── */
 .controls {
     margin-top: 18px;
     display: grid;
@@ -160,8 +127,7 @@ body {
     justify-content: center;
 }
 .arrow {
-    width: 52px;
-    height: 52px;
+    width: 52px; height: 52px;
     font-size: 18px;
     border-radius: 16px;
     border: none;
@@ -169,21 +135,16 @@ body {
     color: white;
     box-shadow: 0 5px 0 #5d4037;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-family: 'Fredoka One', cursive;
-    transition: transform .1s, box-shadow .1s, background .2s;
+    transition: transform .1s, box-shadow .1s;
     user-select: none;
 }
-.arrow:hover  { background: linear-gradient(135deg, #bcaaa4, #a1887f); }
 .arrow:active { transform: translateY(3px); box-shadow: 0 2px 0 #5d4037; }
 .up    { grid-column: 2; grid-row: 1; }
 .left  { grid-column: 1; grid-row: 2; }
 .right { grid-column: 3; grid-row: 2; }
 .down  { grid-column: 2; grid-row: 3; }
-
-/* Center dot */
 .dpad-center {
     grid-column: 2; grid-row: 2;
     width: 52px; height: 52px;
@@ -192,27 +153,21 @@ body {
     display: flex; align-items: center; justify-content: center;
     font-size: 1.2rem;
 }
-
-/* ── LEVEL COMPLETE MODAL ── */
 .modal-overlay {
     display: none;
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: rgba(0,0,0,0.55);
     backdrop-filter: blur(6px);
     z-index: 1000;
-    align-items: center;
-    justify-content: center;
+    align-items: center; justify-content: center;
 }
 .modal-overlay.show { display: flex; }
-
 .modal-box {
     background: #fff;
     border-radius: 28px;
     padding: 36px 32px 28px;
     text-align: center;
-    max-width: 340px;
-    width: 90%;
+    max-width: 340px; width: 90%;
     box-shadow: 0 24px 60px rgba(0,0,0,0.28);
     animation: modalPop .4s cubic-bezier(.175,.885,.32,1.275);
 }
@@ -222,62 +177,27 @@ body {
 }
 .modal-emoji { font-size: 3.5rem; display: block; margin-bottom: 8px; animation: bounce 1s ease infinite; }
 @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-.modal-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.8rem;
-    color: #333;
-    margin-bottom: 6px;
-}
-.modal-sub {
-    font-size: .95rem;
-    color: #888;
-    font-weight: 700;
-    margin-bottom: 18px;
-}
-.modal-stats {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin-bottom: 22px;
-}
-.modal-stat {
-    background: #f5f5f5;
-    border-radius: 16px;
-    padding: 10px 18px;
-    font-family: 'Fredoka One', cursive;
-}
+.modal-title { font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: #333; margin-bottom: 6px; }
+.modal-sub   { font-size: .95rem; color: #888; font-weight: 700; margin-bottom: 18px; }
+.modal-stats { display: flex; justify-content: center; gap: 14px; margin-bottom: 22px; }
+.modal-stat  { background: #f5f5f5; border-radius: 16px; padding: 10px 18px; font-family: 'Fredoka One', cursive; }
 .modal-stat .mval { font-size: 1.4rem; color: var(--coral); display: block; }
 .modal-stat .mlbl { font-size: .72rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
 .modal-btn {
-    width: 100%;
-    padding: 13px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.1rem;
-    background: var(--yellow);
-    color: #333;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 0 5px 0 #c9a800;
-    transition: transform .15s;
+    width: 100%; padding: 13px;
+    font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    background: var(--yellow); color: #333;
+    border: none; border-radius: 50px; cursor: pointer;
+    box-shadow: 0 5px 0 #c9a800; transition: transform .15s;
     margin-bottom: 8px;
 }
-.modal-btn:hover  { transform: translateY(-2px); background: #ffe040; }
+.modal-btn:hover  { transform: translateY(-2px); }
 .modal-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #c9a800; }
-.modal-btn.secondary {
-    background: rgba(0,0,0,0.07);
-    color: #555;
-    box-shadow: none;
-}
-.modal-btn.secondary:hover { background: rgba(0,0,0,0.12); transform: none; }
-
-/* Confetti emoji burst */
+.modal-btn.secondary { background: rgba(0,0,0,0.07); color: #555; box-shadow: none; }
 .confetti-piece {
-    position: fixed;
-    font-size: 1.6rem;
+    position: fixed; font-size: 1.6rem;
     animation: confettiFall 2.5s ease-in forwards;
-    pointer-events: none;
-    z-index: 2000;
+    pointer-events: none; z-index: 2000;
 }
 @keyframes confettiFall {
     0%   { transform: translateY(-40px) rotate(0deg); opacity:1; }
@@ -285,29 +205,22 @@ body {
 }
 </style>
 </head>
-
 <body>
 
-<!-- TOP NAV -->
 <div class="top-bar">
     <button class="nav-btn" onclick="window.location.href='../game.html'">⬅ Back</button>
     <button class="nav-btn" onclick="window.location.href='../login.html'">🚪 Logout</button>
 </div>
 
-<!-- GAME BOX -->
 <div class="game-box">
-
     <h1 class="title">✨ MAZE QUEST ✨</h1>
-
     <div class="stats">
         <div class="stat-item">🗺️ Level <span class="val" id="levelText">1</span></div>
         <div class="stat-item">👟 Moves <span class="val" id="moveText">0</span></div>
+        <div class="stat-item">⭐ Score <span class="val" id="scoreText">0</span></div>
     </div>
-
     <div class="theme-badge" id="themeBadge">🌿 Forest Theme</div>
-
     <div id="maze-container" class="maze"></div>
-
     <div class="controls">
         <button class="arrow up"    onclick="move('up')">▲</button>
         <div class="dpad-center">🕹️</div>
@@ -317,12 +230,11 @@ body {
     </div>
 </div>
 
-<!-- LEVEL COMPLETE MODAL -->
 <div class="modal-overlay" id="levelModal">
     <div class="modal-box">
         <span class="modal-emoji" id="modalEmoji">🎉</span>
-        <div class="modal-title" id="modalTitle">Level Complete!</div>
-        <div class="modal-sub"   id="modalSub">You found the exit!</div>
+        <div class="modal-title"  id="modalTitle">Level Complete!</div>
+        <div class="modal-sub"    id="modalSub">You found the exit!</div>
         <div class="modal-stats">
             <div class="modal-stat">
                 <span class="mval" id="modalLevel">1</span>
@@ -332,40 +244,49 @@ body {
                 <span class="mval" id="modalMoves">0</span>
                 <span class="mlbl">Moves</span>
             </div>
+            <div class="modal-stat">
+                <span class="mval" id="modalScore">0</span>
+                <span class="mlbl">Score</span>
+            </div>
         </div>
         <button class="modal-btn" onclick="continueGame()">▶ Next Level</button>
         <button class="modal-btn secondary" onclick="window.location.href='../game.html'">⬅ Back to Games</button>
     </div>
 </div>
 
+<!-- script.js FIRST → maze.js SECOND → inline patch THIRD -->
 <script src="../script.js"></script>
 <script src="maze.js"></script>
-
 <script>
-    /* ── Patch nextLevel — runs AFTER maze.js saves score ── */
-    const _mazeNextLevelBase = window.nextLevel;
+    // ── Override nextLevel AFTER maze.js is loaded ──
     window.nextLevel = function() {
-        // 1. Calculate score
         const maxMoves   = gridSize * gridSize;
         const levelScore = Math.max(10, maxMoves - moves) * currentLevel;
 
-        // 2. Save to localStorage
-        if (typeof updateScore === 'function') updateScore('maze', levelScore);
+        // Add to running total
+        totalScore += levelScore;
 
-        // 3. Show modal
+        // ── Save per-user score to localStorage ──
+        if (typeof updateScore === 'function') updateScore('maze', totalScore);
+
+        // Update live score display
+        document.getElementById('scoreText').innerText = totalScore;
+
+        // ── Show modal ──
         const themeIdx = Math.floor((currentLevel - 1) / 5) % 4;
-        document.getElementById('modalEmoji').textContent  = ['🎉','⭐','🚀','🏆'][themeIdx];
-        document.getElementById('modalTitle').textContent  = 'Level ' + currentLevel + ' Complete!';
-        document.getElementById('modalSub').textContent    = '🏅 Score: ' + levelScore + ' pts';
-        document.getElementById('modalLevel').textContent  = currentLevel;
-        document.getElementById('modalMoves').textContent  = moves;
+        const emojis   = ['🎉','⭐','🚀','🏆'];
+        document.getElementById('modalEmoji').textContent = emojis[themeIdx];
+        document.getElementById('modalTitle').textContent = 'Level ' + currentLevel + ' Complete!';
+        document.getElementById('modalSub').textContent   = '🏅 +' + levelScore + ' pts this level';
+        document.getElementById('modalLevel').textContent = currentLevel;
+        document.getElementById('modalMoves').textContent = moves;
+        document.getElementById('modalScore').textContent = totalScore;
         document.getElementById('levelModal').classList.add('show');
         launchConfetti();
     };
 
     function continueGame() {
         document.getElementById('levelModal').classList.remove('show');
-        // Advance level + grid size here (maze.js nextLevel no longer does this)
         currentLevel++;
         if (currentLevel % 5 === 0 && gridSize < 15) gridSize += 2;
         resetGame();
@@ -374,7 +295,7 @@ body {
 
     function updateThemeBadge() {
         const names = ['🌿 Forest Theme','🌸 Cherry Blossom','🌌 Galaxy Theme','🍂 Autumn Theme'];
-        const idx = Math.floor((currentLevel - 1) / 5) % names.length;
+        const idx   = Math.floor((currentLevel - 1) / 5) % names.length;
         document.getElementById('themeBadge').textContent = names[idx];
     }
 
@@ -393,6 +314,5 @@ body {
         }
     }
 </script>
-
 </body>
 </html>

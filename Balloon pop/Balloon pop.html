@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balloon Master: Kids Adventure</title>
+    <title>Kiddospark+ | Balloon Master</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #4facfe;
-            --danger: #ff4757;
+            --danger:  #ff4757;
             --success: #2ed573;
-            --yellow: #feca57;
-            --purple: #a29bfe;
+            --yellow:  #feca57;
+            --coral:   #ff6f61;
+            --white:   #ffffff;
         }
 
         body, html {
             margin: 0; padding: 0; height: 100%;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+            font-family: 'Nunito', 'Comic Sans MS', cursive;
             overflow: hidden;
             transition: background 1s ease;
         }
@@ -25,151 +27,225 @@
         .sky-3 { background: linear-gradient(to bottom, #a1c4fd, #c2e9fb); }
         .sky-4 { background: linear-gradient(to bottom, #667eea, #764ba2); }
 
+        /* ── MENU SCREEN ── */
         #menu-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 2000; display: flex;
-            flex-direction: column; align-items: center; padding: 20px;
-            box-sizing: border-box;
+            background: linear-gradient(160deg, #e0f7fa 0%, #fce4ec 50%, #ede7f6 100%);
+            z-index: 2000; display: flex;
+            flex-direction: column; align-items: center;
+            padding: 20px; box-sizing: border-box; overflow-y: auto;
         }
 
+        .menu-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(2rem, 6vw, 3rem);
+            color: var(--primary);
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            margin: 12px 0 4px;
+            animation: titleBounce 2s ease-in-out infinite;
+        }
+        @keyframes titleBounce {
+            0%,100% { transform: translateY(0); }
+            50%      { transform: translateY(-8px); }
+        }
+
+        .menu-subtitle {
+            font-size: .95rem; color: #888; font-weight: 700; margin-bottom: 16px;
+        }
+
+        /* ── NAV BUTTONS (menu) ── */
+        .menu-nav {
+            display: flex; gap: 12px; margin-bottom: 20px;
+        }
+        .nav-btn {
+            background: var(--coral); color: var(--white); border: none;
+            padding: 10px 24px; border-radius: 50px;
+            font-family: 'Fredoka One', cursive; font-size: 1rem; cursor: pointer;
+            box-shadow: 0 5px 0 #c9574c;
+            transition: transform .15s, background .2s, box-shadow .15s;
+        }
+        .nav-btn:hover  { background: var(--yellow); color: #333; transform: translateY(-3px); box-shadow: 0 8px 0 #c9a800; }
+        .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #c9574c; }
+
+        /* ── LEVEL GRID ── */
         .level-grid {
             display: grid; grid-template-columns: repeat(5, 1fr);
-            gap: 15px; margin-top: 20px;
+            gap: 12px; margin-top: 4px; max-width: 420px; width: 100%;
         }
 
         .level-card {
-            width: 65px; height: 65px; background: #f0f0f0;
-            display: flex; align-items: center; justify-content: center;
+            width: 62px; height: 62px;
+            background: #f0f0f0; display: flex;
+            align-items: center; justify-content: center;
             border-radius: 50%; cursor: not-allowed; font-weight: bold;
             color: #ccc; border: 4px solid #ddd;
+            font-family: 'Fredoka One', cursive; font-size: 1.1rem;
         }
-
         .level-card.unlocked {
             background: var(--yellow); color: #57606f; cursor: pointer;
             border-color: #ffa502; box-shadow: 0 4px 0 #e67e22;
+            transition: transform .15s, box-shadow .15s;
         }
+        .level-card.unlocked:hover  { transform: translateY(-4px); box-shadow: 0 8px 0 #e67e22; }
+        .level-card.unlocked:active { transform: translateY(1px); box-shadow: 0 2px 0 #e67e22; }
 
+        /* ── HUD ── */
         #hud {
             position: fixed; top: 15px; width: 100%;
             display: none; justify-content: space-around;
-            align-items: center; z-index: 100;
+            align-items: center; z-index: 100; padding: 0 10px;
+            box-sizing: border-box;
         }
-
         .stat-box {
-            background: rgba(255,255,255,0.9); padding: 10px 20px;
+            background: rgba(255,255,255,0.92); padding: 8px 18px;
             border-radius: 50px; border: 3px solid var(--primary);
-            font-weight: bold;
+            font-weight: bold; font-family: 'Fredoka One', cursive;
+            font-size: .95rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+        #home-btn {
+            background: var(--coral); color: #fff; border: none;
+            padding: 9px 18px; border-radius: 50px;
+            font-family: 'Fredoka One', cursive; font-size: .9rem;
+            cursor: pointer; box-shadow: 0 4px 0 #c9574c;
+        }
+        #home-btn:hover { background: var(--yellow); color: #333; }
 
+        /* ── BALLOON ── */
         .balloon {
             position: absolute; width: 70px; height: 90px;
             border-radius: 50%; cursor: pointer;
             box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2);
-            z-index: 50;
+            z-index: 50; transition: transform .1s;
         }
+        .balloon:hover { transform: scale(1.08); }
 
+        /* ── OVERLAY / MODAL ── */
         .overlay {
             display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(4px);
             z-index: 1000; justify-content: center; align-items: center;
         }
-
         .modal-content {
-            background: white; padding: 35px; border-radius: 30px;
-            text-align: center; max-width: 400px; width: 85%;
-            border: 8px solid var(--primary);
+            background: white; padding: 36px 32px; border-radius: 28px;
+            text-align: center; max-width: 400px; width: 88%;
+            border: 6px solid var(--primary);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+            animation: popIn .35s cubic-bezier(.175,.885,.32,1.275);
         }
+        @keyframes popIn {
+            from { transform: scale(.6); opacity: 0; }
+            to   { transform: scale(1);  opacity: 1; }
+        }
+        .modal-content h2 { font-family: 'Fredoka One', cursive; font-size: 1.8rem; margin-bottom: 12px; }
 
-        .btn { padding: 15px 30px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; margin: 10px; }
-        .btn-main { background: var(--primary); color: white; }
-        .btn-retry { background: var(--danger); color: white; }
+        .btn {
+            padding: 13px 28px; border: none; border-radius: 50px;
+            cursor: pointer; font-weight: bold; margin: 8px;
+            font-family: 'Fredoka One', cursive; font-size: 1rem;
+            transition: transform .15s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-main  { background: var(--primary); color: white; box-shadow: 0 5px 0 #2980b9; }
+        .btn-retry { background: var(--danger);  color: white; box-shadow: 0 5px 0 #c0392b; }
+        .btn-home  { background: var(--coral);   color: white; box-shadow: 0 5px 0 #c9574c; }
 
         .option-btn {
-            display: block; width: 100%; padding: 15px;
-            margin: 10px 0; border: 3px solid #f1f2f6; border-radius: 15px;
-            background: #fff; cursor: pointer; font-size: 1.1rem;
+            display: block; width: 100%; padding: 14px;
+            margin: 8px 0; border: 3px solid #f1f2f6; border-radius: 14px;
+            background: #fff; cursor: pointer; font-size: 1.05rem;
+            font-family: 'Nunito', sans-serif; font-weight: 700;
+            transition: background .15s, border-color .15s, transform .1s;
         }
+        .option-btn:hover { background: #e8f4ff; border-color: var(--primary); transform: scale(1.02); }
     </style>
 </head>
 <body id="game-body" class="sky-1">
 
+    <!-- MENU SCREEN -->
     <div id="menu-screen">
-        <h1 style="color: var(--primary);">🎈 BALLOON MASTER 🎈</h1>
+        <h1 class="menu-title">🎈 Balloon Master 🎈</h1>
+        <p class="menu-subtitle">Pop balloons & answer questions!</p>
+
+        <div class="menu-nav">
+            <button class="nav-btn" onclick="window.location.href='../game.html'">⬅ Back</button>
+            <button class="nav-btn" onclick="window.location.href='../login.html'">🚪 Logout</button>
+        </div>
+
         <div class="level-grid" id="level-grid"></div>
-        <p>Refresh page to start from Level 1</p>
     </div>
 
+    <!-- HUD -->
     <div id="hud">
-        <button id="home-btn" onclick="goToMenu()" style="border-radius:20px; padding:10px;">🏠 Home</button>
-        <div class="stat-box">Lvl: <span id="cur-level">1</span></div>
-        <div class="stat-box">Pop: <span id="cur-score">0</span>/10</div>
+        <button id="home-btn" onclick="goToMenu()">🏠 Menu</button>
+        <div class="stat-box">🎈 Lvl <span id="cur-level">1</span></div>
+        <div class="stat-box">💥 <span id="cur-score">0</span>/10</div>
         <div class="stat-box" id="lives-box">❤️ ❤️ ❤️</div>
     </div>
 
+    <!-- GAME MODAL -->
     <div id="game-modal" class="overlay">
         <div class="modal-content" id="modal-body"></div>
     </div>
 
+    <!-- script.js FIRST so updateScore is defined -->
+    <script src="../script.js"></script>
+
     <script>
-        let currentLevel = 1;
-        let score = 0;
-        let lives = 3;
-        let isPaused = false;
-        let speed = 1.0; 
+        let currentLevel   = 1;
+        let score          = 0;
+        let lives          = 3;
+        let isPaused       = false;
+        let speed          = 1.0;
         let unlockedLevels = 1;
 
         const popSound = new Audio("Balloon Pop 4.mp3");
 
-        // Question Pools
         const easyPool = [
-            {q: "What color is an Apple?", o: ["Red", "Blue", "Black"], a: "Red"},
-            {q: "1 + 1 = ?", o: ["1", "2", "3"], a: "2"},
-            {q: "Which one is a cat?", o: ["🐶", "🐱", "🐷"], a: "🐱"},
-            {q: "Is the Sun hot or cold?", o: ["Hot", "Cold"], a: "Hot"}
+            {q:"What color is an Apple?",     o:["Red","Blue","Black"],   a:"Red"},
+            {q:"1 + 1 = ?",                   o:["1","2","3"],            a:"2"},
+            {q:"Which one is a cat?",          o:["🐶","🐱","🐷"],        a:"🐱"},
+            {q:"Is the Sun hot or cold?",      o:["Hot","Cold"],           a:"Hot"}
         ];
 
         const normalPool = [
-            {q: "Which animal says 'Moo'?", o: ["Dog", "Cow", "Cat"], a: "Cow"},
-            {q: "What is 10 + 5?", o: ["12", "15", "18"], a: "15"},
-            {q: "How many days in a week?", o: ["5", "6", "7"], a: "7"},
-            {q: "Opposite of 'Big'?", o: ["Small", "Large", "Tall"], a: "Small"}
+            {q:"Which animal says 'Moo'?",    o:["Dog","Cow","Cat"],      a:"Cow"},
+            {q:"What is 10 + 5?",             o:["12","15","18"],          a:"15"},
+            {q:"How many days in a week?",    o:["5","6","7"],             a:"7"},
+            {q:"Opposite of 'Big'?",          o:["Small","Large","Tall"], a:"Small"}
         ];
 
-        let availableEasy = [...easyPool];
+        let availableEasy   = [...easyPool];
         let availableNormal = [...normalPool];
 
-        function playPopSound() {
-            popSound.currentTime = 0;
-            popSound.play().catch(e => {});
-        }
+        function playPopSound() { popSound.currentTime = 0; popSound.play().catch(()=>{}); }
 
         function initMenu() {
             const grid = document.getElementById('level-grid');
             grid.innerHTML = '';
-            for(let i=1; i<=20; i++) {
+            for (let i = 1; i <= 20; i++) {
                 const div = document.createElement('div');
                 div.className = `level-card ${i <= unlockedLevels ? 'unlocked' : ''}`;
                 div.textContent = i;
-                if(i <= unlockedLevels) div.onclick = () => startLevel(i);
+                if (i <= unlockedLevels) div.onclick = () => startLevel(i);
                 grid.appendChild(div);
             }
         }
 
         function startLevel(lvl) {
             currentLevel = lvl;
-            score = 0;
-            lives = 3;
-            isPaused = false;
-            
-            // Level 1-5 is slower (0.8 to 1.5), Level 6+ is faster
-            speed = lvl <= 5 ? 0.8 + (lvl * 0.15) : 1.2 + (lvl * 0.3);
-            
+            score        = 0;
+            lives        = 3;
+            isPaused     = false;
+            speed        = lvl <= 5 ? 0.8 + (lvl * 0.15) : 1.2 + (lvl * 0.3);
+
             document.querySelectorAll('.balloon').forEach(b => b.remove());
-            document.getElementById('game-modal').style.display = 'none';
+            document.getElementById('game-modal').style.display  = 'none';
             document.getElementById('menu-screen').style.display = 'none';
-            document.getElementById('hud').style.display = 'flex';
-            
-            let bg = lvl <= 5 ? 'sky-1' : lvl <= 10 ? 'sky-2' : lvl <= 15 ? 'sky-3' : 'sky-4';
+            document.getElementById('hud').style.display         = 'flex';
+
+            const bg = lvl <= 5 ? 'sky-1' : lvl <= 10 ? 'sky-2' : lvl <= 15 ? 'sky-3' : 'sky-4';
             document.getElementById('game-body').className = bg;
 
             updateHUD();
@@ -183,72 +259,72 @@
         }
 
         function createBalloon() {
-            if(isPaused || lives <= 0) return;
+            if (isPaused || lives <= 0) return;
             const b = document.createElement('div');
-            b.className = 'balloon';
-            b.style.left = Math.random() * (window.innerWidth - 80) + 'px';
-            b.style.top = window.innerHeight + 'px';
+            b.className        = 'balloon';
+            b.style.left       = Math.random() * (window.innerWidth - 80) + 'px';
+            b.style.top        = window.innerHeight + 'px';
             b.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
-            
+
             b.onclick = () => {
-                if(isPaused) return;
+                if (isPaused) return;
                 playPopSound();
                 score++;
                 updateHUD();
                 b.remove();
-                if(score === 5) showQuestion();
-                if(score >= 10) showLevelComplete();
-            }
+                if (score === 5)  showQuestion();
+                if (score >= 10) showLevelComplete();
+            };
             document.body.appendChild(b);
-            
+
             let top = window.innerHeight;
             const move = setInterval(() => {
-                if(isPaused) return;
+                if (isPaused) return;
                 top -= speed;
                 b.style.top = top + 'px';
-                if(top < -120) {
+                if (top < -120) {
                     clearInterval(move);
-                    if(b.parentNode) { b.remove(); loseLife(); }
+                    if (b.parentNode) { b.remove(); loseLife(); }
                 }
-                if(lives <= 0 || !document.body.contains(b)) clearInterval(move);
+                if (lives <= 0 || !document.body.contains(b)) clearInterval(move);
             }, 10);
         }
 
         function loseLife() {
             lives--;
             updateHUD();
-            if(lives <= 0) showGameOver();
+            if (lives <= 0) showGameOver();
         }
 
         function showQuestion() {
             isPaused = true;
-            let q;
-            
-            if(currentLevel <= 5) {
-                if(availableEasy.length === 0) availableEasy = [...easyPool];
-                const idx = Math.floor(Math.random() * availableEasy.length);
-                q = availableEasy.splice(idx, 1)[0];
+            let pool, avail;
+            if (currentLevel <= 5) {
+                if (availableEasy.length === 0) availableEasy = [...easyPool];
+                avail = availableEasy;
             } else {
-                if(availableNormal.length === 0) availableNormal = [...normalPool];
-                const idx = Math.floor(Math.random() * availableNormal.length);
-                q = availableNormal.splice(idx, 1)[0];
+                if (availableNormal.length === 0) availableNormal = [...normalPool];
+                avail = availableNormal;
             }
-            
+            const idx = Math.floor(Math.random() * avail.length);
+            const q   = avail.splice(idx, 1)[0];
+
             let html = `<h2>${q.q}</h2>`;
-            q.o.forEach(opt => html += `<button class="option-btn" onclick="checkAnswer('${opt}', '${q.a}')">${opt}</button>`);
-            
+            q.o.forEach(opt =>
+                html += `<button class="option-btn" onclick="checkAnswer('${opt}','${q.a}')">${opt}</button>`
+            );
             document.getElementById('modal-body').innerHTML = html;
             document.getElementById('game-modal').style.display = 'flex';
         }
 
         function checkAnswer(chosen, correct) {
-            if(chosen === correct) {
+            if (chosen === correct) {
                 document.getElementById('game-modal').style.display = 'none';
                 isPaused = false;
             } else {
                 lives--;
                 updateHUD();
-                if(lives <= 0) {
+                if (lives <= 0) {
                     showGameOver();
                 } else {
                     document.getElementById('game-modal').style.display = 'none';
@@ -259,40 +335,53 @@
 
         function showLevelComplete() {
             isPaused = true;
-            if(typeof updateScore === 'function') updateScore('Balloon pop', currentLevel);
-            if(currentLevel === unlockedLevels && unlockedLevels < 20) unlockedLevels++;
+
+            // ── Save score: level number as score (matches track.html key 'balloon') ──
+            if (typeof updateScore === 'function') updateScore('balloon', currentLevel);
+
+            if (currentLevel === unlockedLevels && unlockedLevels < 20) unlockedLevels++;
+
+            const isLast = currentLevel >= 20;
             document.getElementById('modal-body').innerHTML = `
-                <h2 style="color:var(--success)">Level Clear!</h2>
-                <button class="btn btn-main" onclick="startLevel(${currentLevel + 1})">Next Level</button>
+                <h2 style="color:var(--success)">🎉 Level ${currentLevel} Clear!</h2>
+                <p style="font-size:1rem;color:#555;">⭐ Score saved!</p>
+                ${isLast
+                    ? `<button class="btn btn-main" onclick="goToMenu()">🏠 Back to Menu</button>`
+                    : `<button class="btn btn-main" onclick="startLevel(${currentLevel + 1})">Next Level ➡️</button>
+                       <button class="btn btn-home" onclick="goToMenu()">🏠 Menu</button>`
+                }
             `;
             document.getElementById('game-modal').style.display = 'flex';
         }
 
         function showGameOver() {
             isPaused = true;
-            if(typeof updateScore === 'function') updateScore('Balloon pop', currentLevel);
+
+            // ── Save score even on game over (progress so far) ──
+            if (typeof updateScore === 'function') updateScore('balloon', currentLevel);
+
             document.getElementById('modal-body').innerHTML = `
-                <h2 style="color:var(--danger)">TRY AGAIN!</h2>
-                <p>No more lives left ❤️</p>
-                <button class="btn btn-retry" onclick="startLevel(${currentLevel})">Retry Level</button>
-                <button class="btn btn-main" onclick="goToMenu()">Home</button>
+                <h2 style="color:var(--danger)">💔 Try Again!</h2>
+                <p>No more lives left!</p>
+                <button class="btn btn-retry" onclick="startLevel(${currentLevel})">🔄 Retry</button>
+                <button class="btn btn-home"  onclick="goToMenu()">🏠 Menu</button>
             `;
             document.getElementById('game-modal').style.display = 'flex';
         }
 
         function goToMenu() {
             isPaused = true;
-            document.getElementById('game-modal').style.display = 'none';
-            document.getElementById('hud').style.display = 'none';
+            document.getElementById('game-modal').style.display  = 'none';
+            document.getElementById('hud').style.display         = 'none';
             document.getElementById('menu-screen').style.display = 'flex';
             document.querySelectorAll('.balloon').forEach(b => b.remove());
             initMenu();
         }
 
         function spawnLoop() {
-            if(document.getElementById('hud').style.display === 'flex' && !isPaused) {
+            if (document.getElementById('hud').style.display === 'flex' && !isPaused) {
                 createBalloon();
-                let rate = currentLevel <= 5 ? 1800 : 1500 / (1 + currentLevel * 0.1);
+                const rate = currentLevel <= 5 ? 1800 : 1500 / (1 + currentLevel * 0.1);
                 setTimeout(spawnLoop, rate);
             } else if (isPaused) {
                 setTimeout(spawnLoop, 100);
@@ -300,10 +389,7 @@
         }
 
         initMenu();
-        if (typeof updateScore === 'function') updateScore('balloon', score); 
-        // when you finish a level or run out of lives, call
-        // if(typeof updateScore === 'function') updateScore('Balloon pop', currentLevel);
     </script>
-    <script src="../script.js"></script>
+
 </body>
 </html>

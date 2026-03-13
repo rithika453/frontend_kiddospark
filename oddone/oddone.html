@@ -15,15 +15,16 @@
         <span>Level: <span id="currentLevel">1</span>/10</span>
         <span>Points: <span id="score">0</span></span>
     </div>
-    
+
     <p class="question-text">Pick the Odd One!</p>
-    
+
     <div id="options" class="options-grid"></div>
-    
+
     <button id="nextBtn" onclick="nextQuestion()">NEXT LEVEL ➔</button>
 </div>
 
+<!-- script.js FIRST so updateScore is defined before oddone.js runs -->
+<script src="../script.js"></script>
 <script src="oddone.js"></script>
-  <script src="../script.js"></script>
 </body>
 </html>
