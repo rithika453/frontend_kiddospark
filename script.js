@@ -1,3 +1,5 @@
+const API = 'https://frontend-0pqr.onrender.com';
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const characters = document.querySelectorAll(".background-container img");
@@ -6,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const CHAR_W = 120;
         const CHAR_H = 140;
 
-        /* -- Viewport dimensions -- */
         const VW = window.innerWidth;
         const VH = window.innerHeight;
 
@@ -43,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return arr;
         }
 
-     
         const MAX_ATTEMPTS = 300;
         const placed = [];
         const charArray = shuffle(Array.from(characters));
@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 if (clash) continue;
 
-         
                 img.style.left           = toXpct(x) + '%';
                 img.style.top            = toYpct(y) + '%';
                 img.style.animationDelay = (index * 0.35) + 's';
@@ -88,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!ok) img.style.display = 'none';
         });
     }
+
     const loginBtn  = document.getElementById("loginBtn");
     const userInput = document.getElementById("userName");
 
@@ -96,33 +96,70 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Enter") performLogin();
     });
 
-    function performLogin() {
+    async function performLogin() {
         const name = userInput.value.trim();
-        if (name !== "") {
-            localStorage.setItem("playerName", name);
-            window.location.href = "game.html";
-        } else {
+        if (!name) {
             alert("Hey Champion! 🌟 Please enter your name to play!");
+            return;
         }
+
+        try {
+            // API call — user create or fetch
+            const res = await fetch(API + '/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: name.toLowerCase() })
+            });
+            const data = await res.json();
+            console.log('Login success:', data);
+        } catch (err) {
+            console.warn('API login failed, continuing offline:', err);
+        }
+
+        localStorage.setItem("playerName", name.toLowerCase());
+        window.location.href = "game.html";
     }
 });
 
 function goTrack()     { window.location.href = "track.html";     }
 function goBack()      { window.location.href = "login.html";     }
 function goChallenge() { window.location.href = "challenge.html"; }
-function updateScore(gameKey, newScore) {
-    const user = (localStorage.getItem('playerName') || 
-                  localStorage.getItem('kp_username') || 'guest').toLowerCase().trim();
+
+async function updateScore(gameKey, newScore) {
+    const user = (
+        localStorage.getItem('playerName') ||
+        localStorage.getItem('kp_username') ||
+        'guest'
+    ).toLowerCase().trim();
+
     const prefix    = user + '_' + gameKey;
     const scoreKey  = prefix + '_score';
     const recentKey = prefix + '_recent';
     const dateKey   = prefix + '_date';
 
+    // Local save
     const prevBest = parseInt(localStorage.getItem(scoreKey) || '0');
     if (newScore > prevBest) {
         localStorage.setItem(scoreKey, newScore);
     }
     localStorage.setItem(recentKey, newScore);
     localStorage.setItem(dateKey, new Date().toLocaleDateString());
+
+    // MongoDB save
+    try {
+        await fetch(API + '/api/game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: user,
+                gameName: gameKey,
+                score: newScore
+            })
+        });
+        console.log('Score saved to MongoDB:', gameKey, newScore);
+    } catch (err) {
+        console.warn('API score save failed, local only:', err);
+    }
 }
+
 window.sendScore = updateScore;
