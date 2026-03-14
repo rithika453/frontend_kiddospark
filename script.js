@@ -1,4 +1,4 @@
-const API = 'https://frontend-0pqr.onrender.com';
+const API = 'https://frontend-6pqr.onrender.com';
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -104,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            // API call — user create or fetch
             const res = await fetch(API + '/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -137,7 +136,6 @@ async function updateScore(gameKey, newScore) {
     const recentKey = prefix + '_recent';
     const dateKey   = prefix + '_date';
 
-    // Local save
     const prevBest = parseInt(localStorage.getItem(scoreKey) || '0');
     if (newScore > prevBest) {
         localStorage.setItem(scoreKey, newScore);
@@ -145,7 +143,6 @@ async function updateScore(gameKey, newScore) {
     localStorage.setItem(recentKey, newScore);
     localStorage.setItem(dateKey, new Date().toLocaleDateString());
 
-    // MongoDB save
     try {
         await fetch(API + '/api/game', {
             method: 'POST',
